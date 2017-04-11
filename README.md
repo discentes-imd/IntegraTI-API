@@ -12,3 +12,13 @@ Ideias iniciais do projeto:
 * Publicitar agendas dos laboratórios;
 * Fácil acesso a vagas de bolsas, estágios etc. vindos filtrados do bd do SIGAA.
 
+## Sobre a implementação
+A implementação será feita utilizando uma abordagem de RESTful API. Na qual [IntegraTI-API](https://github.com/bti-imd/IntegraTI-AP) fornecerá a API utilizada pela interface implementada na [IntegraTI-Web](https://github.com/bti-imd/IntegraTI-Web).
+### Tecnologias utilizadas
+* Python
+* Flask
+* MySQL / PostgreSQL
+
+### Padrões de projeto utilizados
+* DAO
+* Layer Supertype Pattern
