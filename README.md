@@ -1,6 +1,6 @@
 # IntegraTI
+Veja nossa [wiki com a documentação](https://github.com/bti-imd/IntegraTI-API/wiki).
 
-Veja nossa [wiki com a documentação](https://github.com/bti-imd/IntegraTI-API/wiki) 
 Ideias iniciais do projeto:
 * Autogerência de minicursos e eventos discentes e docentes (“horizontalmente”) (exposição de temas, voluntariado de apresentadores etc), com anexo dos materiais usados no evento e talvez funções de divulgaço por e-mail;
 * Organizar grupos de estudos (temporários ou não);
