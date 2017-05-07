@@ -34,6 +34,4 @@ def login():
 		return redirect(url_for('success',name = user))
 
 if __name__ == "__main__":
-	app.debbug = True
-	app.run()
-	app.run(debbug = True)
+	app.run(debug = True)
