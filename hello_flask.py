@@ -1,9 +1,9 @@
-from flask import Flask, redirect, url_for, request
+from flask import Flask, redirect, url_for, request, render_template
 app = Flask(__name__)
 
-@app.route("/")
-def hello_world():
-   return "Hello World"
+@app.route('/')
+def index():
+   return render_template('hello.html')
 
 @app.route('/admin')
 def hello_admin():
