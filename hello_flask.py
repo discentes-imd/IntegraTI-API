@@ -19,6 +19,10 @@ def hello_user(name):
 		return redirect(url_for('hello_admin'))
 	else:
 		return redirect(url_for('hello_guest',guest = name))
+
+@app.route('/score/<int:score>')
+def hello_name(score):
+   return render_template('score.html', marks = score)
   
 @app.route('/success/<name>')
 def success(name):
