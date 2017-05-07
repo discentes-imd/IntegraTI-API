@@ -3,17 +3,17 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
-   return render_template('hello.html')
+   return render_template('index.html')
 
-@app.route('/admin')
+@app.route('/hello/admin')
 def hello_admin():
-   return 'Hello Admin'
+   return render_template('hello.html', name='admin')
 
-@app.route('/guest/<guest>')
+@app.route('/hello/guest/<guest>')
 def hello_guest(guest):
-   return 'Hello %s as Guest' % guest
+   return render_template('hello.html', name=guest)
 
-@app.route('/user/<name>')
+@app.route('/hello/user/<name>')
 def hello_user(name):
 	if name =='admin':
 		return redirect(url_for('hello_admin'))
