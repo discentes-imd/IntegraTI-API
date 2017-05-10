@@ -39,15 +39,12 @@ read this: ["8 motivos pra programar em inglês"](https://blog.lucascaton.com.br
 
 ## Commiting changes
 
-* Commit a change only after everything is ok, i.e., the whole software should run at any commit (future commits can fix a logic bug,
-code styles etc, but do not commit something that may crash the whole system).
+* Commit a change only after everything is ok, i.e., the whole software should run at any commit (future commits can fix a logic bug, code styles etc, but do not commit something that may crash the whole system).
 * Run all tests and please add them in a test folder at repository's root before claiming that your branch is done.
 * Use significant (and short) commit titles, and add comments if you feel necessary (please, feel it).
-* Reference the issue that you're treating at commit titles (e.g.: you're implementing issue #4 about user authentication, so you ```git checkout -b 4userauth```,
-code something, test, and then ```git commit -m "#4 add login function"```), it will help everyone to know that someone is already working in that issue
-(GitHub will notice that you commited about an issue if you write it's ID like that).
-* Do not try to merge at master anything by yourself, it is dangerous and can disturb someone else's code, so use your branchs only and leave it after you're done,
-waiting for the team's review to merge.
+* Reference the issue that you're treating at commit titles (e.g.: you're implementing issue #4 about user authentication, so you ```git checkout -b 4userauth```, code something, test, and then ```git commit -m "#4 add login function"```), it will help everyone to know that someone is already working in that issue (GitHub will notice that you commited about an issue if you write it's ID like that).
+* If your commit closes a issue, use ```fixes #x``` or ```resolves #x``` or ```closes #x```
+* Do not try to merge at master anything by yourself, it is dangerous and can disturb someone else's code, so use your branchs only and leave it after you're done, waiting for the team's review to merge.
 
 ## In-code communication
 
