@@ -1,7 +1,7 @@
 # Import flask dependencies
 from flask import Blueprint, request, flash, g, session, redirect, url_for
 
-from flask_restplus import Namespace, Resource, fields
+from flask_restplus import Namespace, Resource, fields, reqparse
 
 # Import password / encryption helper tools
 from werkzeug import check_password_hash, generate_password_hash
@@ -17,14 +17,28 @@ mod_event = Blueprint('event', __name__, url_prefix='/event')
 
 ns = Namespace('event', description='Operations related to events')
 
+event_model = ns.model('event', {
+    'id_event': fields.Integer,
+    'title': fields.String,
+    'description': fields.String,
+    'date_event_start': fields.DateTime,
+    'date_event_end': fields.DateTime,
+    'location': fields.String,
+    'url': fields.String,
+    'help': fields.Boolean,
+    'event_type_id': fields.Integer
+})
+
 
 @ns.route('/<int:id>')
 @ns.doc(params={'id': 'Event ID'})
 class EventController(Resource):
+
     @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
                        400: 'Id não é do tipo int',
                        404: 'Não foi encontrado o evento com a id especificada',
                        200: 'Retorna o modelo evento no corpo da request'})
+    @ns.marshal_with(event_model)
     def get(self, id):
         return {'id': id, 'nome': 'evento padrão'}
 
@@ -32,6 +46,7 @@ class EventController(Resource):
                        400: 'Id não é do tipo int ou o modelo está errado',
                        404: 'Não foi encontrado o evento com a id especificada',
                        200: 'Retorna o modelo evento no corpo da request'})
+    @ns.expect(event_model)
     def put(self, id):
         return {'msg': 'nada no put'}
 
@@ -48,5 +63,6 @@ class EventPostController(Resource):
     @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
                        400: 'O modelo está com partes faltando ou com tipos diferentes',
                        200: 'Retorna o id do evento no corpo da request'})
+    @ns.expect(event_model)
     def post(self):
         return {'msg': 'nada no post'}
