@@ -17,7 +17,7 @@ mod_event = Blueprint('event', __name__, url_prefix='/event')
 
 ns = Namespace('event', description='Operations related to events')
 
-@ns.route('/event/<int:id>', endpoint='event')
+@ns.route('/<int:id>', endpoint='event')
 @ns.doc(params={'id': 'An ID'})
 class Event_controller(Resource):
     def get(self, id):
