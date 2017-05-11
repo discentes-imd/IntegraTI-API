@@ -7,7 +7,7 @@ create table reg_tag(
 	id_tag int(10) unsigned not null auto_increment,
 	name varchar(50) not null,
 	slug varchar(50) not null,
-
+	
 	id_user_insert int(10) unsigned, 
 	id_user_update int(10) unsigned,
 	data_insert datetime not null,
@@ -22,8 +22,9 @@ create table reg_user{
 	name varchar(100) not null,
 
 	sigaa_matricula varchar(15) not null,
-	sigaa_user_name varchar(30) not null,
-	sigaa_password varchar(100) not null,
+
+	username varchar(30) not null,
+	password varchar(100) not null,
 
 	path_foto varchar(255) not null, 
 
