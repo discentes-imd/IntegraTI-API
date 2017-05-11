@@ -17,12 +17,36 @@ mod_event = Blueprint('event', __name__, url_prefix='/event')
 
 ns = Namespace('event', description='Operations related to events')
 
-@ns.route('/<int:id>', endpoint='event')
+
+@ns.route('/<int:id>')
 @ns.doc(params={'id': 'Event ID'})
-class Event_controller(Resource):
+class EventController(Resource):
+    @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
+                       400: 'Id não é do tipo int',
+                       404: 'Não foi encontrado o evento com a id especificada',
+                       200: 'Retorna o modelo evento no corpo da request'})
     def get(self, id):
         return {'id': id, 'nome': 'evento padrão'}
 
-    @ns.doc(responses={403: 'Not Authorized'})
-    def post(self, id):
-        ns.abort(403)
+    @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
+                       400: 'Id não é do tipo int ou o modelo está errado',
+                       404: 'Não foi encontrado o evento com a id especificada',
+                       200: 'Retorna o modelo evento no corpo da request'})
+    def put(self, id):
+        return {'msg': 'nada no put'}
+
+    @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
+                       400: 'Id não é do tipo int',
+                       404: 'Não foi encontrado o evento com a id especificada',
+                       200: 'O evento foi desabilitado no db'})
+    def delete(self, id):
+        return {'msg': 'nada no delete'}
+
+
+@ns.route('/')
+class EventPostController(Resource):
+    @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
+                       400: 'O modelo está com partes faltando ou com tipos diferentes',
+                       200: 'Retorna o id do evento no corpo da request'})
+    def post(self):
+        return {'msg': 'nada no post'}
