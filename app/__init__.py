@@ -1,5 +1,5 @@
 # Import flask and template operators
-from flask import Flask, render_template
+from flask import Flask
 
 # Import SQLAlchemy
 from flask.ext.sqlalchemy import SQLAlchemy
@@ -21,6 +21,7 @@ app.config.from_object('config')
 # by modules and controllers
 db = SQLAlchemy(app)
 
+
 # Sample HTTP error handling
 @app.errorhandler(404)
 def not_found(error):
@@ -28,7 +29,6 @@ def not_found(error):
 
 # Import a module / component using its blueprint handler variable (mod_auth)
 from app.mod_auth.controllers import mod_auth as auth_module
-
 from app.mod_events.controllers import mod_event as event_module, ns as ns_event
 
 # Register blueprint(s)
