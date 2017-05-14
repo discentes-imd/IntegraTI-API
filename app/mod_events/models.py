@@ -72,8 +72,8 @@ class User(Model):
     id_user = Column(Integer, primary_key=True)
     name = Column(String(80))
     email = Column(String(50), unique=True)
-    sigaa_registration_number = Column(Integer, unique=True)
-    sigaa_user_name = Column(Integer, unique=True)
+    sigaa_registration_number = Column(String(15), unique=True)
+    sigaa_user_name = Column(String(50), unique=True)
     password = Column(String(64))
     id_photo_file = Column(Integer, ForeignKey('file.id_file'))
     event_participations = relationship(
