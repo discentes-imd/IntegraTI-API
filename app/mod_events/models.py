@@ -5,6 +5,7 @@ TODO: implement foreign keys
 TODO: maybe these constructors are bad designed (do they need
       explicit/manual None values if such fields don't exist in database?)
 """
+#pylint: disable = C0111, R0903
 
 from sqlalchemy import Column, Integer, Boolean, String, DateTime, Model
 
