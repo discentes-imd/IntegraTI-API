@@ -2,7 +2,7 @@
 from flask import Flask
 
 # Import SQLAlchemy
-from flask.ext.sqlalchemy import SQLAlchemy
+from flask_sqlalchemy import SQLAlchemy
 
 from flask_restplus import Api
 
@@ -16,6 +16,7 @@ api = Api(app, version='1.0', title='IntegraTI-API',
 
 # Configurations
 app.config.from_object('config')
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
 # Define the database object which is imported
 # by modules and controllers
