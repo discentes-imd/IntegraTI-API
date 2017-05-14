@@ -13,6 +13,7 @@ from sqlalchemy import Column, Integer, Boolean, String, DateTime, Model
 class User(Model):
     id_user = Column(Integer, primary_key=True)
     name = Column(String(80))
+    email = Column(String(50), unique=True)
     sigaa_registration_number = Column(Integer, unique=True)
     sigaa_user_name = Column(Integer, unique=True)
     password = Column(String(64))
