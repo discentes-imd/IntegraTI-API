@@ -1,13 +1,77 @@
 """
-Class models to access data for any event controller.
+Model classes to access persistence. Such classes
+are gonna provide data to controller layer.
 
-TODO: implement foreign keys
 TODO: maybe these constructors are bad designed (do they need
       explicit/manual None values if such fields don't exist in database?)
 """
-#pylint: disable = C0111, R0903
+# pylint: disable = C0111, R0903, C0103
 
-from sqlalchemy import Column, Integer, Boolean, String, DateTime, Model
+
+from sqlalchemy import (
+    Model,
+    Table, Column,
+    Integer, Boolean, String, DateTime,
+    relationship, ForeignKey, backref
+)
+
+
+# Many-to-many helper tables (for public access, use models only) -----------
+
+
+user_interests = Table(
+    'user_interests',
+    Column(
+        'id_user',
+        Integer,
+        ForeignKey('user.id_user')
+    ),
+    Column(
+        'id_tag',
+        Integer,
+        ForeignKey('tag.id_tag')
+    )
+)
+
+
+
+event_tags = Table(
+    'event_tags',
+    Column(
+        'id_event',
+        Integer,
+        ForeignKey('user.id_event')
+    ),
+    Column(
+        'id_tag',
+        Integer,
+        ForeignKey('tag.id_tag')
+    )
+)
+
+'''
+participations = Table(
+    'participations',
+    Column(
+        'id_participation_status',
+        Integer,
+        ForeignKey('participation_status.id_participation_status')
+    ),
+    Column(
+        'id_user',
+        Integer,
+        ForeignKey('user.id_user')
+    ),
+    Column(
+        'id_event',
+        Integer,
+        ForeignKey('event.id_event')
+    )
+)
+'''
+
+
+# Models and their simple relantionships -------------------------------------
 
 
 class User(Model):
@@ -17,7 +81,19 @@ class User(Model):
     sigaa_registration_number = Column(Integer, unique=True)
     sigaa_user_name = Column(Integer, unique=True)
     password = Column(String(64))
-    id_photo_file = Column(Integer)
+    id_photo_file = Column(Integer, ForeignKey('file.id_file'))
+    '''
+    participations = relationship(
+        'Participation',
+        secondary=participations,
+        backref=backref('users', lazy='dynamic')
+    )
+    '''
+    user_interests = relationship(
+        'Tag',
+        secondary=user_interests,
+        backref=backref('interested_users', lazy='dynamic')
+    )
 
     def __init__(self, id_user, name, sigaa_registration_number, sigaa_user_name,
                  password, id_photo_file):
@@ -39,6 +115,14 @@ class Event(Model):
     location = Column(String(50))
     url = Column(String(2000))
     need_help = Column(Boolean)
+    id_event_type = Column(Integer, ForeignKey('event_type.id_event_type'))
+    participations = relationship('Participation', backref='event', lazy='dynamic')
+    files = relationship('File', backref='event', lazy='dynamic')
+    tags = relationship(
+        'Tag',
+        secondary=event_tags,
+        backref=backref('events', lazy='dynamic')
+    )
 
     def __init__(self, id_event, title, description, date_start, date_end,
                  location, url, need_help):
@@ -90,7 +174,7 @@ class EventType(Model):
         self.description = description
 
 
-
+'''
 class ParticipationStatus(Model):
     id_participation_status = Column(Integer, primary_key=True)
     name = Column(String, unique=True)
@@ -98,18 +182,4 @@ class ParticipationStatus(Model):
     def __init__(self, id_participation_status, name):
         self.id_participation_status = id_participation_status
         self.name = name
-
-
-
-class Participation(Model):
-    id_participation = Column(Integer, primary_key=True)
-    id_participation_status = Column(Integer)
-    id_user = Column(Integer)
-    id_event = Column(Integer)
-
-    def __init__(self, id_participation, id_participation_status, id_user, id_event):
-        self.id_participation = id_participation
-        self.id_participation_status = id_participation_status
-        self.id_user = id_user
-        self.id_event = id_event
-
+'''
