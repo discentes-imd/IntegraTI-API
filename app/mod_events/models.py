@@ -49,14 +49,9 @@ event_tags = Table(
     )
 )
 
-'''
-participations = Table(
-    'participations',
-    Column(
-        'id_participation_status',
-        Integer,
-        ForeignKey('participation_status.id_participation_status')
-    ),
+
+event_participations = Table(
+    'event_participations',
     Column(
         'id_user',
         Integer,
@@ -68,7 +63,6 @@ participations = Table(
         ForeignKey('event.id_event')
     )
 )
-'''
 
 
 # Models and their simple relantionships -------------------------------------
@@ -82,13 +76,11 @@ class User(Model):
     sigaa_user_name = Column(Integer, unique=True)
     password = Column(String(64))
     id_photo_file = Column(Integer, ForeignKey('file.id_file'))
-    '''
-    participations = relationship(
-        'Participation',
-        secondary=participations,
-        backref=backref('users', lazy='dynamic')
+    event_participations = relationship(
+        'Event',
+        secondary=event_participations,
+        backref=backref('participating_users', lazy='dynamic')
     )
-    '''
     user_interests = relationship(
         'Tag',
         secondary=user_interests,
@@ -172,14 +164,3 @@ class EventType(Model):
         self.id_event_type = id_event_type
         self.name = name
         self.description = description
-
-
-'''
-class ParticipationStatus(Model):
-    id_participation_status = Column(Integer, primary_key=True)
-    name = Column(String, unique=True)
-
-    def __init__(self, id_participation_status, name):
-        self.id_participation_status = id_participation_status
-        self.name = name
-'''
