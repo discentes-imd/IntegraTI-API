@@ -27,6 +27,20 @@ user_interest = db.Table(
     )
 )
 
+event_file = db.Table(
+    'event_file',
+    db.Column(
+        'id_event',
+        db.Integer,
+        db.ForeignKey('event.id_event')
+    ),
+    db.Column(
+        'id_file',
+        db.Integer,
+        db.ForeignKey('file.id_file')
+    )
+)
+
 event_tag = db.Table(
     'event_tag',
     db.Column(
@@ -121,7 +135,11 @@ class Event(Base):
     need_help = db.Column(db.Boolean)
     id_event_type = db.Column(db.Integer, db.ForeignKey('event_type.id_event_type'))
     participations = db.relationship('Participation', backref='event', lazy='dynamic')
-    files = db.relationship('File', backref='event', lazy='dynamic')
+    files = db.relationship(
+        'File',
+        secondary=event_file,
+        backref=db.backref('events', lazy='dynamic')
+    )
     tags = db.relationship(
         'Tag',
         secondary=event_tag,
