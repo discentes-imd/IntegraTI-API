@@ -23,6 +23,7 @@ class EventTagDeleteController(Resource):
                        404: 'Não foi encontrado o evento ou tag com a id especificada',
                        200: 'A tag foi removida do evento'})
     def delete(self, event_id, tag_id):
+        '''Remove a tag from an event'''
         return {'msg': 'Nada ainda'}, 200
 
 
@@ -32,4 +33,5 @@ class EventTagPostController(Resource):
                        400: 'O id do evento não é do tipo int',
                        200: 'A tag foi foi adicionada ao evento'})
     def post(self, event_id):
+        '''Add a tag to an event'''
         return {'msg': 'Nada ainda'}, 200

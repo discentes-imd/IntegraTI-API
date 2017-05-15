@@ -61,6 +61,7 @@ class EventController(Resource):
                        200: 'Retorna o modelo evento no corpo da request'})
     @ns.marshal_with(event)
     def get(self, id):
+        '''Get an event by ID'''
         return {
                     'id_event': id,
                     'title': 'fgggffg',
@@ -80,6 +81,7 @@ class EventController(Resource):
                        200: 'Retorna o modelo evento no corpo da request'})
     @ns.expect(event)
     def put(self, id):
+        '''Update an event by ID'''
         return {'msg': 'nada no put'}
 
     @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
@@ -87,6 +89,7 @@ class EventController(Resource):
                        404: 'Não foi encontrado o evento com a id especificada',
                        200: 'O evento foi desabilitado no db'})
     def delete(self, id):
+        '''Delete an event by ID'''
         return {'msg': 'nada no delete'}
 
 
@@ -94,9 +97,10 @@ class EventController(Resource):
 class EventPostController(Resource):
     @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
                        400: 'Algum dos argumentos está errado',
-                       200: 'Retorna no corpo da request uma lista de eventos encontrado'})
+                       200: 'Retorna no corpo da request uma lista de eventos encontrados'})
     @ns.marshal_with(event)
     def get(self):
+        '''Get an event list'''
         return {'msg': 'nada aqui'}
 
     @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
@@ -104,6 +108,7 @@ class EventPostController(Resource):
                        200: 'Retorna o id do evento no corpo da request'})
     @ns.expect(event)
     def post(self):
+        '''Create a new event'''
         return {'msg': 'nada no post'}
 
 
@@ -117,6 +122,7 @@ class EventTypeController(Resource):
                        200: 'Retorna o modelo tipo de evento no corpo da request'})
     @ns.marshal_with(event_type)
     def get(self, id):
+        '''Get an event_type by ID'''
         return {'msg': 'nada ainda aqui'}
 
     @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
@@ -125,6 +131,7 @@ class EventTypeController(Resource):
                        200: 'O tipo foi alterado'})
     @ns.expect(event)
     def put(self, id):
+        '''Update an event_type by ID'''
         return {'msg': 'nada no put'}
 
     @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
@@ -132,6 +139,7 @@ class EventTypeController(Resource):
                        404: 'Não foi encontrado o evento com a id especificada',
                        200: 'O tipo de evento foi desabilitado no db'})
     def delete(self, id):
+        '''Delete an event_type by ID'''
         return {'msg': 'nada no delete'}
 
 
@@ -142,6 +150,7 @@ class EventTypePostController(Resource):
                        200: 'Retorna no corpo da request uma lista de tipo de eventos encontrado'})
     @ns.marshal_with(event_type)
     def get(self):
+        '''Get a event_type list'''
         return {'msg': 'nada aqui'}
 
     @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
@@ -149,4 +158,5 @@ class EventTypePostController(Resource):
                        200: 'Retorna o id do tipo de evento no corpo da request'})
     @ns.expect(event)
     def post(self):
+        '''Create a new event_type'''
         return {'msg': 'nada no post'}
