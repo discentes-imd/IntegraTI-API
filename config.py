@@ -28,4 +28,3 @@ SECRET_KEY = "secret"
 
 LOGGING_FORMAT = '[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
 LOGGING_LOCATION = 'logs/error.log'
-LOGGING_LEVEL = logging.ERROR
