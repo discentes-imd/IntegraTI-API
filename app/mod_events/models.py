@@ -8,6 +8,7 @@ TODO: maybe these constructors are bad designed (do they need
 # pylint: disable = C0111, R0903, C0103
 
 from app import db
+from sqlalchemy.ext.declarative import declared_attr
 
 
 # Many-to-many helper tables (for public access, use models only) -----------
@@ -57,13 +58,22 @@ event_participation = db.Table(
 
 # Models and their simple relantionships -------------------------------------
 
-class User(db.Model):
-    disabled = db.Column(db.Boolean)
-    inserted_since = db.Column(db.DateTime)
-    inserted_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
-    last_updated_since = db.Column(db.DateTime)
-    last_updated_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
+class Base(db.Model):
+    __abstract__ = True
 
+    disabled = db.Column(db.Boolean)
+    inserted_since = db.Column(db.DateTime, default=db.func.now())
+    @declared_attr
+    def inserted_by(cls):
+        return db.Column(db.Integer, db.ForeignKey('user.id_user'))
+    # inserted_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
+    last_updated_since = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
+    @declared_attr
+    def last_updated_by(cls):
+        return db.Column(db.Integer, db.ForeignKey('user.id_user'))
+    # last_updated_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
+
+class User(Base):
     id_user = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))
     email = db.Column(db.String(50), unique=True)
@@ -100,13 +110,7 @@ class User(db.Model):
 
 
 
-class Event(db.Model):
-    disabled = db.Column(db.Boolean)
-    inserted_since = db.Column(db.DateTime)
-    inserted_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
-    last_updated_since = db.Column(db.DateTime)
-    last_updated_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
-
+class Event(Base):
     id_event = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50))
     description = db.Column(db.String(255))
@@ -144,13 +148,7 @@ class Event(db.Model):
 
 
 
-class Tag(db.Model):
-    disabled = db.Column(db.Boolean)
-    inserted_since = db.Column(db.DateTime)
-    inserted_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
-    last_updated_since = db.Column(db.DateTime)
-    last_updated_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
-
+class Tag(Base):
     id_tag = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(25), unique=True)
     slug = db.Column(db.String(50), unique=True)
@@ -162,13 +160,7 @@ class Tag(db.Model):
 
 
 
-class File(db.Model):
-    disabled = db.Column(db.Boolean)
-    inserted_since = db.Column(db.DateTime)
-    inserted_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
-    last_updated_since = db.Column(db.DateTime)
-    last_updated_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
-
+class File(Base):
     id_file = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
     description = db.Column(db.String(255))
@@ -189,13 +181,7 @@ class File(db.Model):
 
 
 
-class EventType(db.Model):
-    disabled = db.Column(db.Boolean)
-    inserted_since = db.Column(db.DateTime)
-    inserted_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
-    last_updated_since = db.Column(db.DateTime)
-    last_updated_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
-
+class EventType(Base):
     id_event_type = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)
     description = db.Column(db.String(255))
