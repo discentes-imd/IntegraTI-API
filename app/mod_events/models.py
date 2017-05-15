@@ -31,7 +31,7 @@ event_tags = db.Table(
     db.Column(
         'id_event',
         db.Integer,
-        db.ForeignKey('user.id_event')
+        db.ForeignKey('event.id_event')
     ),
     db.Column(
         'id_tag',
