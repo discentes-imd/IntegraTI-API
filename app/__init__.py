@@ -13,7 +13,7 @@ from logging.handlers import RotatingFileHandler
 app = Flask(__name__)
 
 # Define Api application object
-api = Api(app, version='1.0', title='IntegraTI-API',
+api = Api(app, version='0.5a', title='IntegraTI-API',
     description='API do IntegraTI',)
 
 # Configurations
