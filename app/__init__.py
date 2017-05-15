@@ -1,6 +1,9 @@
 # Import flask and template operators
 from flask import Flask
 
+import pymysql
+pymysql.install_as_MySQLdb()
+
 # Import SQLAlchemy
 from flask_sqlalchemy import SQLAlchemy
 
