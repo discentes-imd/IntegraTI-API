@@ -1,16 +1,13 @@
-# Import flask and template operators
+# Imports
 from flask import Flask
-
-import pymysql
-pymysql.install_as_MySQLdb()
-
-# Import SQLAlchemy
 from flask_sqlalchemy import SQLAlchemy
-
+from flask_script import Manager
+from flask_migrate import Migrate, MigrateCommand
 from flask_restplus import Api
-
 import logging
 from logging.handlers import RotatingFileHandler
+import pymysql
+pymysql.install_as_MySQLdb()
 
 # Define the WSGI application object
 app = Flask(__name__)
