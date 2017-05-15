@@ -106,22 +106,17 @@ class User(Base):
         backref=db.backref('interested_users', lazy='dynamic')
     )
 
-    def __init__(self, id_user, name, sigaa_registration_number, sigaa_user_name,
-                 password, id_photo_file,
-                 disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
-        self.inserted_since = inserted_since
+    def __init__(self, name, email, sigaa_registration_number, sigaa_user_name,
+                 password, id_photo_file, inserted_by, last_updated_by):
         self.inserted_by = inserted_by
-        self.last_updated_since = last_updated_since
         self.last_updated_by = last_updated_by
 
-        self.id_user = id_user
         self.name = name
+        self.email = email
         self.sigaa_registration_number = sigaa_registration_number
         self.sigaa_user_name = sigaa_user_name
         self.password = password
         self.id_photo_file = id_photo_file
-
-
 
 class Event(Base):
     id_event = db.Column(db.Integer, primary_key=True)
@@ -144,15 +139,11 @@ class Event(Base):
         backref=db.backref('events', lazy='dynamic')
     )
 
-    def __init__(self, id_event, title, description, date_start, date_end,
-                 location, url, need_help,
-                 disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
-        self.inserted_since = inserted_since
+    def __init__(self, title, description, date_start, date_end,
+                 location, url, need_help, inserted_by, last_updated_by):
         self.inserted_by = inserted_by
-        self.last_updated_since = last_updated_since
         self.last_updated_by = last_updated_by
 
-        self.id_event = id_event
         self.title = title
         self.description = description
         self.date_start = date_start
@@ -161,19 +152,14 @@ class Event(Base):
         self.url = url
         self.need_help = need_help
 
-
-
 class Tag(Base):
     id_tag = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(25), unique=True)
     slug = db.Column(db.String(50), unique=True)
 
-    def __init__(self, id_tag, name, slug):
-        self.id_tag = id_tag
+    def __init__(self, name, slug):
         self.name = name
         self.slug = slug
-
-
 
 class File(Base):
     id_file = db.Column(db.Integer, primary_key=True)
@@ -181,32 +167,22 @@ class File(Base):
     description = db.Column(db.String(255))
     path = db.Column(db.String(255), unique=True)
 
-    def __init__(self, id_file, name, description, path,
-                 disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
-        self.inserted_since = inserted_since
+    def __init__(self, name, description, path, inserted_by, last_updated_by):
         self.inserted_by = inserted_by
-        self.last_updated_since = last_updated_since
         self.last_updated_by = last_updated_by
 
-        self.id_file = id_file
         self.name = name
         self.description = description
         self.path = path
-
-
 
 class EventType(Base):
     id_event_type = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)
     description = db.Column(db.String(255))
 
-    def __init__(self, id_event_type, name, description,
-                 disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
-        self.inserted_since = inserted_since
+    def __init__(self, name, description, inserted_by, last_updated_by):
         self.inserted_by = inserted_by
-        self.last_updated_since = last_updated_since
         self.last_updated_by = last_updated_by
 
-        self.id_event_type = id_event_type
         self.name = name
         self.description = description
