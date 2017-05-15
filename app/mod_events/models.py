@@ -109,11 +109,11 @@ class Event(db.Model):
 
     id_event = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50))
-    description = db.Column(db.String(2000))
+    description = db.Column(db.String(255))
     date_start = db.Column(db.DateTime)
     date_end = db.Column(db.DateTime)
     location = db.Column(db.String(50))
-    url = db.Column(db.String(2000))
+    url = db.Column(db.String(255))
     need_help = db.Column(db.Boolean)
     id_event_type = db.Column(db.Integer, db.ForeignKey('event_type.id_event_type'))
     participations = db.relationship('Participation', backref='event', lazy='dynamic')
@@ -171,8 +171,8 @@ class File(db.Model):
 
     id_file = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(100))
-    description = db.Column(db.String(1000))
-    path = db.Column(db.String(2000), unique=True)
+    description = db.Column(db.String(255))
+    path = db.Column(db.String(255), unique=True)
 
     def __init__(self, id_file, name, description, path,
                  disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
@@ -198,7 +198,7 @@ class EventType(db.Model):
 
     id_event_type = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)
-    description = db.Column(db.String(1000))
+    description = db.Column(db.String(255))
 
     def __init__(self, id_event_type, name, description,
                  disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
