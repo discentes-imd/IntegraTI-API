@@ -7,7 +7,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # Define the database - we are working with
 # SQLite for this example
-SQLALCHEMY_DATABASE_URI = 'sqlite:///' + os.path.join(BASE_DIR, 'app.db')
+SQLALCHEMY_DATABASE_URI = 'mysql://root:root@localhost/IntegraTI'
 DATABASE_CONNECT_OPTIONS = {}
 
 # Application threads. A common general assumption is
@@ -25,3 +25,6 @@ CSRF_SESSION_KEY = "secret"
 
 # Secret key for signing cookies
 SECRET_KEY = "secret"
+
+LOGGING_FORMAT = '[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
+LOGGING_LOCATION = 'logs/error.log'
