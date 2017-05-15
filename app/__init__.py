@@ -30,6 +30,11 @@ app.logger.addHandler(handler)
 # by modules and controllers
 db = SQLAlchemy(app)
 
+migrate = Migrate(app, db)
+
+manager = Manager(app)
+manager.add_command('db', MigrateCommand)
+
 # Sample HTTP error handling
 @app.errorhandler(404)
 def not_found(error):
