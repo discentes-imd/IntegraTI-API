@@ -12,8 +12,8 @@ from app import db
 
 # Many-to-many helper tables (for public access, use models only) -----------
 
-user_interests = db.Table(
-    'user_interests',
+user_interest = db.Table(
+    'user_interest',
     db.Column(
         'id_user',
         db.Integer,
@@ -26,8 +26,8 @@ user_interests = db.Table(
     )
 )
 
-event_tags = db.Table(
-    'event_tags',
+event_tag = db.Table(
+    'event_tag',
     db.Column(
         'id_event',
         db.Integer,
@@ -40,8 +40,8 @@ event_tags = db.Table(
     )
 )
 
-event_participations = db.Table(
-    'event_participations',
+event_participation = db.Table(
+    'event_participation',
     db.Column(
         'id_user',
         db.Integer,
@@ -73,12 +73,12 @@ class User(db.Model):
     id_photo_file = db.Column(db.Integer, db.ForeignKey('file.id_file'))
     event_participations = db.relationship(
         'Event',
-        secondary=event_participations,
+        secondary=event_participation,
         backref=db.backref('participating_users', lazy='dynamic')
     )
     user_interests = db.relationship(
         'Tag',
-        secondary=user_interests,
+        secondary=user_interest,
         backref=db.backref('interested_users', lazy='dynamic')
     )
 
@@ -120,7 +120,7 @@ class Event(db.Model):
     files = db.relationship('File', backref='event', lazy='dynamic')
     tags = db.relationship(
         'Tag',
-        secondary=event_tags,
+        secondary=event_tag,
         backref=db.backref('events', lazy='dynamic')
     )
 
