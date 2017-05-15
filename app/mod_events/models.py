@@ -75,7 +75,7 @@ event_participation = db.Table(
 class Base(db.Model):
     __abstract__ = True
 
-    disabled = db.Column(db.Boolean)
+    disabled = db.Column(db.Boolean, default=0)
     inserted_since = db.Column(db.DateTime, default=db.func.now())
     @declared_attr
     def inserted_by(cls):
@@ -109,7 +109,6 @@ class User(Base):
     def __init__(self, id_user, name, sigaa_registration_number, sigaa_user_name,
                  password, id_photo_file,
                  disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
-        self.disabled = disabled
         self.inserted_since = inserted_since
         self.inserted_by = inserted_by
         self.last_updated_since = last_updated_since
@@ -148,7 +147,6 @@ class Event(Base):
     def __init__(self, id_event, title, description, date_start, date_end,
                  location, url, need_help,
                  disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
-        self.disabled = disabled
         self.inserted_since = inserted_since
         self.inserted_by = inserted_by
         self.last_updated_since = last_updated_since
@@ -185,7 +183,6 @@ class File(Base):
 
     def __init__(self, id_file, name, description, path,
                  disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
-        self.disabled = disabled
         self.inserted_since = inserted_since
         self.inserted_by = inserted_by
         self.last_updated_since = last_updated_since
@@ -205,7 +202,6 @@ class EventType(Base):
 
     def __init__(self, id_event_type, name, description,
                  disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
-        self.disabled = disabled
         self.inserted_since = inserted_since
         self.inserted_by = inserted_by
         self.last_updated_since = last_updated_since
