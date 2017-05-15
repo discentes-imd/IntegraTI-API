@@ -134,7 +134,6 @@ class Event(Base):
     url = db.Column(db.String(255))
     need_help = db.Column(db.Boolean)
     id_event_type = db.Column(db.Integer, db.ForeignKey('event_type.id_event_type'))
-    participations = db.relationship('Participation', backref='event', lazy='dynamic')
     files = db.relationship(
         'File',
         secondary=event_file,
