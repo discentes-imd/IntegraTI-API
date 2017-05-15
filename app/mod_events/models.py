@@ -69,6 +69,12 @@ event_participations = Table(
 
 
 class User(Model):
+    disabled = Column(Boolean)
+    inserted_since = Column(DateTime)
+    inserted_by = Column(Integer, ForeignKey('user.id_user'))
+    last_updated_since = Column(DateTime)
+    last_updated_by = Column(Integer, ForeignKey('user.id_user'))
+
     id_user = Column(Integer, primary_key=True)
     name = Column(String(80))
     email = Column(String(50), unique=True)
@@ -88,7 +94,14 @@ class User(Model):
     )
 
     def __init__(self, id_user, name, sigaa_registration_number, sigaa_user_name,
-                 password, id_photo_file):
+                 password, id_photo_file,
+                 disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
+        self.disabled = disabled
+        self.inserted_since = inserted_since
+        self.inserted_by = inserted_by
+        self.last_updated_since = last_updated_since
+        self.last_updated_by = last_updated_by
+
         self.id_user = id_user
         self.name = name
         self.sigaa_registration_number = sigaa_registration_number
@@ -99,6 +112,12 @@ class User(Model):
 
 
 class Event(Model):
+    disabled = Column(Boolean)
+    inserted_since = Column(DateTime)
+    inserted_by = Column(Integer, ForeignKey('user.id_user'))
+    last_updated_since = Column(DateTime)
+    last_updated_by = Column(Integer, ForeignKey('user.id_user'))
+
     id_event = Column(Integer, primary_key=True)
     title = Column(String(50))
     description = Column(String(2000))
@@ -117,7 +136,14 @@ class Event(Model):
     )
 
     def __init__(self, id_event, title, description, date_start, date_end,
-                 location, url, need_help):
+                 location, url, need_help,
+                 disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
+        self.disabled = disabled
+        self.inserted_since = inserted_since
+        self.inserted_by = inserted_by
+        self.last_updated_since = last_updated_since
+        self.last_updated_by = last_updated_by
+
         self.id_event = id_event
         self.title = title
         self.description = description
@@ -130,6 +156,12 @@ class Event(Model):
 
 
 class Tag(Model):
+    disabled = Column(Boolean)
+    inserted_since = Column(DateTime)
+    inserted_by = Column(Integer, ForeignKey('user.id_user'))
+    last_updated_since = Column(DateTime)
+    last_updated_by = Column(Integer, ForeignKey('user.id_user'))
+
     id_tag = Column(Integer, primary_key=True)
     name = Column(String(25), unique=True)
     slug = Column(String(50), unique=True)
@@ -142,12 +174,25 @@ class Tag(Model):
 
 
 class File(Model):
+    disabled = Column(Boolean)
+    inserted_since = Column(DateTime)
+    inserted_by = Column(Integer, ForeignKey('user.id_user'))
+    last_updated_since = Column(DateTime)
+    last_updated_by = Column(Integer, ForeignKey('user.id_user'))
+
     id_file = Column(Integer, primary_key=True)
     name = Column(String(100))
     description = Column(String(1000))
     path = Column(String(2000), unique=True)
 
-    def __init__(self, id_file, name, description, path):
+    def __init__(self, id_file, name, description, path,
+                 disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
+        self.disabled = disabled
+        self.inserted_since = inserted_since
+        self.inserted_by = inserted_by
+        self.last_updated_since = last_updated_since
+        self.last_updated_by = last_updated_by
+
         self.id_file = id_file
         self.name = name
         self.description = description
@@ -156,11 +201,24 @@ class File(Model):
 
 
 class EventType(Model):
+    disabled = Column(Boolean)
+    inserted_since = Column(DateTime)
+    inserted_by = Column(Integer, ForeignKey('user.id_user'))
+    last_updated_since = Column(DateTime)
+    last_updated_by = Column(Integer, ForeignKey('user.id_user'))
+
     id_event_type = Column(Integer, primary_key=True)
     name = Column(String(50), unique=True)
     description = Column(String(1000))
 
-    def __init__(self, id_event_type, name, description):
+    def __init__(self, id_event_type, name, description,
+                 disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
+        self.disabled = disabled
+        self.inserted_since = inserted_since
+        self.inserted_by = inserted_by
+        self.last_updated_since = last_updated_since
+        self.last_updated_by = last_updated_by
+
         self.id_event_type = id_event_type
         self.name = name
         self.description = description
