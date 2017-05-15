@@ -7,90 +7,79 @@ TODO: maybe these constructors are bad designed (do they need
 """
 # pylint: disable = C0111, R0903, C0103
 
-
-from sqlalchemy import (
-    Model,
-    Table, Column,
-    Integer, Boolean, String, DateTime,
-    relationship, ForeignKey, backref
-)
+from app import db
 
 
 # Many-to-many helper tables (for public access, use models only) -----------
 
-
-user_interests = Table(
+user_interests = db.Table(
     'user_interests',
-    Column(
+    db.Column(
         'id_user',
-        Integer,
-        ForeignKey('user.id_user')
+        db.Integer,
+        db.ForeignKey('user.id_user')
     ),
-    Column(
+    db.Column(
         'id_tag',
-        Integer,
-        ForeignKey('tag.id_tag')
+        db.Integer,
+        db.ForeignKey('tag.id_tag')
     )
 )
 
-
-
-event_tags = Table(
+event_tags = db.Table(
     'event_tags',
-    Column(
+    db.Column(
         'id_event',
-        Integer,
-        ForeignKey('user.id_event')
+        db.Integer,
+        db.ForeignKey('user.id_event')
     ),
-    Column(
+    db.Column(
         'id_tag',
-        Integer,
-        ForeignKey('tag.id_tag')
+        db.Integer,
+        db.ForeignKey('tag.id_tag')
     )
 )
 
-
-event_participations = Table(
+event_participations = db.Table(
     'event_participations',
-    Column(
+    db.Column(
         'id_user',
-        Integer,
-        ForeignKey('user.id_user')
+        db.Integer,
+        db.ForeignKey('user.id_user')
     ),
-    Column(
+    db.Column(
         'id_event',
-        Integer,
-        ForeignKey('event.id_event')
+        db.Integer,
+        db.ForeignKey('event.id_event')
     )
 )
 
 
 # Models and their simple relantionships -------------------------------------
 
+class User(db.Model):
+    disabled = db.Column(db.Boolean)
+    inserted_since = db.Column(db.DateTime)
+    inserted_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
+    last_updated_since = db.Column(db.DateTime)
+    last_updated_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
 
-class User(Model):
-    disabled = Column(Boolean)
-    inserted_since = Column(DateTime)
-    inserted_by = Column(Integer, ForeignKey('user.id_user'))
-    last_updated_since = Column(DateTime)
-    last_updated_by = Column(Integer, ForeignKey('user.id_user'))
-
-    id_user = Column(Integer, primary_key=True)
-    name = Column(String(80))
-    email = Column(String(50), unique=True)
-    sigaa_registration_number = Column(String(15), unique=True)
-    sigaa_user_name = Column(String(50), unique=True)
-    password = Column(String(64))
-    id_photo_file = Column(Integer, ForeignKey('file.id_file'))
-    event_participations = relationship(
+    id_user = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(80))
+    email = db.Column(db.String(50), unique=True)
+    sigaa_registration_number = db.Column(db.String(15), unique=True)
+    sigaa_user_name = db.Column(db.String(50), unique=True)
+    password = db.Column(db.String(64))
+    id_photo_file = db.Column(db.Integer, db.ForeignKey('file.id_file'))
+    event_participations = db.relationship(
         'Event',
         secondary=event_participations,
-        backref=backref('participating_users', lazy='dynamic')
+        backref=db.backref('participating_users', lazy='dynamic')
     )
-    user_interests = relationship(
+    user_interests = db.relationship(
         'Tag',
         secondary=user_interests,
-        backref=backref('interested_users', lazy='dynamic')
+        backref=db.backref('interested_users', lazy='dynamic')
     )
 
     def __init__(self, id_user, name, sigaa_registration_number, sigaa_user_name,
@@ -111,28 +100,28 @@ class User(Model):
 
 
 
-class Event(Model):
-    disabled = Column(Boolean)
-    inserted_since = Column(DateTime)
-    inserted_by = Column(Integer, ForeignKey('user.id_user'))
-    last_updated_since = Column(DateTime)
-    last_updated_by = Column(Integer, ForeignKey('user.id_user'))
+class Event(db.Model):
+    disabled = db.Column(db.Boolean)
+    inserted_since = db.Column(db.DateTime)
+    inserted_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
+    last_updated_since = db.Column(db.DateTime)
+    last_updated_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
 
-    id_event = Column(Integer, primary_key=True)
-    title = Column(String(50))
-    description = Column(String(2000))
-    date_start = Column(DateTime)
-    date_end = Column(DateTime)
-    location = Column(String(50))
-    url = Column(String(2000))
-    need_help = Column(Boolean)
-    id_event_type = Column(Integer, ForeignKey('event_type.id_event_type'))
-    participations = relationship('Participation', backref='event', lazy='dynamic')
-    files = relationship('File', backref='event', lazy='dynamic')
-    tags = relationship(
+    id_event = db.Column(db.Integer, primary_key=True)
+    title = db.Column(db.String(50))
+    description = db.Column(db.String(2000))
+    date_start = db.Column(db.DateTime)
+    date_end = db.Column(db.DateTime)
+    location = db.Column(db.String(50))
+    url = db.Column(db.String(2000))
+    need_help = db.Column(db.Boolean)
+    id_event_type = db.Column(db.Integer, db.ForeignKey('event_type.id_event_type'))
+    participations = db.relationship('Participation', backref='event', lazy='dynamic')
+    files = db.relationship('File', backref='event', lazy='dynamic')
+    tags = db.relationship(
         'Tag',
         secondary=event_tags,
-        backref=backref('events', lazy='dynamic')
+        backref=db.backref('events', lazy='dynamic')
     )
 
     def __init__(self, id_event, title, description, date_start, date_end,
@@ -155,16 +144,16 @@ class Event(Model):
 
 
 
-class Tag(Model):
-    disabled = Column(Boolean)
-    inserted_since = Column(DateTime)
-    inserted_by = Column(Integer, ForeignKey('user.id_user'))
-    last_updated_since = Column(DateTime)
-    last_updated_by = Column(Integer, ForeignKey('user.id_user'))
+class Tag(db.Model):
+    disabled = db.Column(db.Boolean)
+    inserted_since = db.Column(db.DateTime)
+    inserted_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
+    last_updated_since = db.Column(db.DateTime)
+    last_updated_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
 
-    id_tag = Column(Integer, primary_key=True)
-    name = Column(String(25), unique=True)
-    slug = Column(String(50), unique=True)
+    id_tag = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(25), unique=True)
+    slug = db.Column(db.String(50), unique=True)
 
     def __init__(self, id_tag, name, slug):
         self.id_tag = id_tag
@@ -173,17 +162,17 @@ class Tag(Model):
 
 
 
-class File(Model):
-    disabled = Column(Boolean)
-    inserted_since = Column(DateTime)
-    inserted_by = Column(Integer, ForeignKey('user.id_user'))
-    last_updated_since = Column(DateTime)
-    last_updated_by = Column(Integer, ForeignKey('user.id_user'))
+class File(db.Model):
+    disabled = db.Column(db.Boolean)
+    inserted_since = db.Column(db.DateTime)
+    inserted_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
+    last_updated_since = db.Column(db.DateTime)
+    last_updated_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
 
-    id_file = Column(Integer, primary_key=True)
-    name = Column(String(100))
-    description = Column(String(1000))
-    path = Column(String(2000), unique=True)
+    id_file = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100))
+    description = db.Column(db.String(1000))
+    path = db.Column(db.String(2000), unique=True)
 
     def __init__(self, id_file, name, description, path,
                  disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
@@ -200,16 +189,16 @@ class File(Model):
 
 
 
-class EventType(Model):
-    disabled = Column(Boolean)
-    inserted_since = Column(DateTime)
-    inserted_by = Column(Integer, ForeignKey('user.id_user'))
-    last_updated_since = Column(DateTime)
-    last_updated_by = Column(Integer, ForeignKey('user.id_user'))
+class EventType(db.Model):
+    disabled = db.Column(db.Boolean)
+    inserted_since = db.Column(db.DateTime)
+    inserted_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
+    last_updated_since = db.Column(db.DateTime)
+    last_updated_by = db.Column(db.Integer, db.ForeignKey('user.id_user'))
 
-    id_event_type = Column(Integer, primary_key=True)
-    name = Column(String(50), unique=True)
-    description = Column(String(1000))
+    id_event_type = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(50), unique=True)
+    description = db.Column(db.String(1000))
 
     def __init__(self, id_event_type, name, description,
                  disabled, inserted_since, inserted_by, last_updated_since, last_updated_by):
