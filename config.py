@@ -25,3 +25,7 @@ CSRF_SESSION_KEY = "secret"
 
 # Secret key for signing cookies
 SECRET_KEY = "secret"
+
+LOGGING_FORMAT = '[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
+LOGGING_LOCATION = 'logs/error.log'
+LOGGING_LEVEL = logging.ERROR

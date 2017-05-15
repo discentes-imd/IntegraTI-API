@@ -6,6 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 
 from flask_restplus import Api
 
+import logging
+from logging.handlers import RotatingFileHandler
 
 # Define the WSGI application object
 app = Flask(__name__)
@@ -18,6 +20,14 @@ api = Api(app, version='1.0', title='IntegraTI-API',
 app.config.from_object('config')
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 
+# Add log handler
+handler = RotatingFileHandler(app.config['LOGGING_LOCATION'], maxBytes=100000, backupCount=50)
+handler.setLevel(app.config['LOGGING_LEVEL'])
+formatter = logging.Formatter(app.config['LOGGING_FORMAT'])
+handler.setFormatter(formatter)
+app.logger.addHandler(handler)
+
+
 # Define the database object which is imported
 # by modules and controllers
 db = SQLAlchemy(app)
@@ -26,6 +36,7 @@ db = SQLAlchemy(app)
 # Sample HTTP error handling
 @app.errorhandler(404)
 def not_found(error):
+	app.logger.error('An error occurred')
     return 'Error: 404'
 
 # Import a module / component using its blueprint handler variable (mod_auth)
