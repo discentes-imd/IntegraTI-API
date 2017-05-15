@@ -33,8 +33,9 @@ db = SQLAlchemy(app)
 # Sample HTTP error handling
 @app.errorhandler(404)
 def not_found(error):
-    app.logger.error('An 404 error occurred')
-    return 'Error: 404 Page not found'
+    app.logger.error(error)
+    return error
+
 
 # Import a module / component using its blueprint handler variable (mod_auth)
 from app.mod_auth.controllers import mod_auth as auth_module
