@@ -18,6 +18,7 @@ from app.mod_events.controllers import mod_event, ns
 from flask import request
 from app.utils import update_object
 from app.utils import abort_if_none
+from app.utils import msg
 # Define the blueprint: 'event', set its url prefix: app.url/event
 # mod_event = Blueprint('event', __name__, url_prefix='/event')
 
@@ -143,7 +144,7 @@ class EventTypeController(Resource):
         abort_if_none(et, 404, 'Not Found')
         update_object(et, request.json)
         db.session.commit()
-        return {'msg': 'altered'}
+        return msg('altered')
 
     @ns.response(403, 'User is not logged or not have permission')
     @ns.response(400, 'ID is not int')
@@ -156,7 +157,7 @@ class EventTypeController(Resource):
         abort_if_none(et, 404, 'Not Found')
         et.disabled = 1
         db.session.commit()
-        return {'msg': 'disabled'}
+        return msg('disabled')
 
 
 @ns.route('/type')
@@ -167,7 +168,7 @@ class EventTypePostController(Resource):
     @ns.marshal_with(event_type)
     def get(self):
         '''Get a event_type list'''
-        return EventType.query.filter(EventType.disabled == 0)
+        return EventType.query.filter(EventType.disabled == 0).all()
 
     @ns.response(403, 'User is not logged or not have permission')
     @ns.response(400, 'The model is malformed')
@@ -178,4 +179,4 @@ class EventTypePostController(Resource):
         et = EventType(request.json['name'], request.json['description'], 1, 1)
         db.session.add(et)
         db.session.commit()
-        return {"id": et.id_event_type}
+        return msg(et.id_event_type, 'id')

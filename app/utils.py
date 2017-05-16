@@ -1,5 +1,6 @@
 from flask_restplus import abort
 
+
 def update_object(obj, dictio):
     """ Update a object based on a dictionary  """
     for attr, value in dictio.items():
@@ -11,3 +12,7 @@ def abort_if_none(item, code, msg):
     if item is None:
         abort(code, msg)
 
+
+def msg(text, key='msg'):
+    """ Returns a Json message with text"""
+    return {key: text}
