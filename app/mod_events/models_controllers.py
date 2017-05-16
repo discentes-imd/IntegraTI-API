@@ -121,7 +121,7 @@ class EventTypeController(Resource):
     @ns.response(403, 'User is not logged or not have permission')
     @ns.response(400, 'ID is not int')
     @ns.response(404, 'Not Found')
-    @ns.response(200, 'Returns the event model on the body of the request', event_type)
+    @ns.response(200, 'Returns the event model on the body of the response', event_type)
     @ns.marshal_with(event_type)
     def get(self, id):
         '''Get an event_type by ID'''
