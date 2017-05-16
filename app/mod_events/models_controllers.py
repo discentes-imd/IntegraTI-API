@@ -17,6 +17,7 @@ from app.mod_events.models import EventType
 from app.mod_events.controllers import mod_event, ns
 from flask import request
 from app.utils import update_object
+from app.utils import abort_if_none
 # Define the blueprint: 'event', set its url prefix: app.url/event
 # mod_event = Blueprint('event', __name__, url_prefix='/event')
 
@@ -125,10 +126,9 @@ class EventTypeController(Resource):
     @ns.marshal_with(event_type)
     def get(self, id):
         '''Get an event_type by ID'''
-        et = EventType.query.filter(EventType.disabled != 1 and EventType.id_event_type == id)
+        et = EventType.query.filter(EventType.disabled == 0).filter(EventType.id_event_type == id)
         et = et.first()
-        if et is None:
-            ns.abort(404, 'Not Found')
+        abort_if_none(et, 404, 'Not Found')
         return et
 
     @ns.response(403, 'User is not logged or not have permission')
@@ -138,10 +138,9 @@ class EventTypeController(Resource):
     @ns.expect(event_type)
     def put(self, id):
         '''Update an event_type by ID'''
-        et = EventType.query.filter(EventType.disabled != 1 and EventType.id_event_type == id)
+        et = EventType.query.filter(EventType.disabled == 0).filter(EventType.id_event_type == id)
         et = et.first()
-        if et is None:
-            ns.abort(404, 'Not Found')
+        abort_if_none(et, 404, 'Not Found')
         update_object(et, request.json)
         db.session.commit()
         return {'msg': 'altered'}
@@ -152,10 +151,9 @@ class EventTypeController(Resource):
     @ns.response(200, 'Event disabled')
     def delete(self, id):
         '''Delete an event_type by ID'''
-        et = EventType.query.filter(EventType.disabled != 1 and EventType.id_event_type == id)
+        et = EventType.query.filter(EventType.disabled == 0).filter(EventType.id_event_type == id)
         et = et.first()
-        if et is None:
-            return {'msg': 'Not Found'}, 404
+        abort_if_none(et, 404, 'Not Found')
         et.disabled = 1
         db.session.commit()
         return {'msg': 'disabled'}
@@ -169,12 +167,11 @@ class EventTypePostController(Resource):
     @ns.marshal_with(event_type)
     def get(self):
         '''Get a event_type list'''
-        return EventType.query.filter(EventType.disabled != 1)
+        return EventType.query.filter(EventType.disabled == 0)
 
     @ns.response(403, 'User is not logged or not have permission')
     @ns.response(400, 'The model is malformed')
-    @ns.response(404, 'Not Found')
-    @ns.response(200, 'Event disabled')
+    @ns.response(200, 'Event inserted')
     @ns.expect(event_type)
     def post(self):
         '''Create a new event_type'''
