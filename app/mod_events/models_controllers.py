@@ -9,11 +9,14 @@ from datetime import datetime
 
 # Import the database object from the main app module
 from app import db
+from app.mod_events.models import EventType
 
 # Import module models (i.e. User)
 # from app.mod_event.models import User
 
 from app.mod_events.controllers import mod_event, ns
+from flask import request
+from app.utils import update_object
 # Define the blueprint: 'event', set its url prefix: app.url/event
 # mod_event = Blueprint('event', __name__, url_prefix='/event')
 
@@ -115,48 +118,67 @@ class EventPostController(Resource):
 @ns.route('/type/<int:id>')
 @ns.doc(params={'id': 'Event Type ID'})
 class EventTypeController(Resource):
-
-    @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
-                       400: 'Id não é do tipo int',
-                       404: 'Não foi encontrado o tipo de evento com a id especificada',
-                       200: 'Retorna o modelo tipo de evento no corpo da request'})
+    @ns.response(403, 'User is not logged or not have permission')
+    @ns.response(400, 'ID is not int')
+    @ns.response(404, 'Not Found')
+    @ns.response(200, 'Returns the event model on the body of the request', event_type)
     @ns.marshal_with(event_type)
     def get(self, id):
         '''Get an event_type by ID'''
-        return {'msg': 'nada ainda aqui'}
+        et = EventType.query.filter(EventType.disabled != 1 and EventType.id_event_type == id)
+        et = et.first()
+        if et is None:
+            ns.abort(404, 'Not Found')
+        return et
 
-    @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
-                       400: 'Id não é do tipo int ou o modelo está errado',
-                       404: 'Não foi encontrado o evento com a id especificada',
-                       200: 'O tipo foi alterado'})
-    @ns.expect(event)
+    @ns.response(403, 'User is not logged or not have permission')
+    @ns.response(400, 'ID is not int')
+    @ns.response(404, 'Not Found')
+    @ns.response(200, 'Event altered')
+    @ns.expect(event_type)
     def put(self, id):
         '''Update an event_type by ID'''
-        return {'msg': 'nada no put'}
+        et = EventType.query.filter(EventType.disabled != 1 and EventType.id_event_type == id)
+        et = et.first()
+        if et is None:
+            ns.abort(404, 'Not Found')
+        update_object(et, request.json)
+        db.session.commit()
+        return {'msg': 'altered'}
 
-    @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
-                       400: 'Id não é do tipo int',
-                       404: 'Não foi encontrado o evento com a id especificada',
-                       200: 'O tipo de evento foi desabilitado no db'})
+    @ns.response(403, 'User is not logged or not have permission')
+    @ns.response(400, 'ID is not int')
+    @ns.response(404, 'Not Found')
+    @ns.response(200, 'Event disabled')
     def delete(self, id):
         '''Delete an event_type by ID'''
-        return {'msg': 'nada no delete'}
+        et = EventType.query.filter(EventType.disabled != 1 and EventType.id_event_type == id)
+        et = et.first()
+        if et is None:
+            return {'msg': 'Not Found'}, 404
+        et.disabled = 1
+        db.session.commit()
+        return {'msg': 'disabled'}
 
 
 @ns.route('/type')
 class EventTypePostController(Resource):
-    @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
-                       400: 'Algum dos argumentos está errado',
-                       200: 'Retorna no corpo da request uma lista de tipo de eventos encontrado'})
+    @ns.response(403, 'User is not logged or not have permission')
+    @ns.response(400, 'One of the arguments is malformed')
+    @ns.response(200, 'Return an list of events that matched criteria', event_type)
     @ns.marshal_with(event_type)
     def get(self):
         '''Get a event_type list'''
-        return {'msg': 'nada aqui'}
+        return EventType.query.filter(EventType.disabled != 1)
 
-    @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
-                       400: 'O modelo está com partes faltando ou com tipos diferentes',
-                       200: 'Retorna o id do tipo de evento no corpo da request'})
-    @ns.expect(event)
+    @ns.response(403, 'User is not logged or not have permission')
+    @ns.response(400, 'The model is malformed')
+    @ns.response(404, 'Not Found')
+    @ns.response(200, 'Event disabled')
+    @ns.expect(event_type)
     def post(self):
         '''Create a new event_type'''
-        return {'msg': 'nada no post'}
+        et = EventType(request.json['name'], request.json['description'], 1, 1)
+        db.session.add(et)
+        db.session.commit()
+        return {"id": et.id_event_type}
