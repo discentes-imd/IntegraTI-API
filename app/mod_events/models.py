@@ -118,6 +118,7 @@ class User(Base):
         self.password = password
         self.id_photo_file = id_photo_file
 
+
 class Event(Base):
     id_event = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50))
@@ -139,8 +140,8 @@ class Event(Base):
         backref=db.backref('events', lazy='dynamic')
     )
 
-    def __init__(self, title, description, date_start, date_end,
-                 location, url, need_help, inserted_by, last_updated_by):
+    def __init__(self, title=None, description=None, date_start=None, date_end=None,
+                 location=None, url=None, need_help=None, inserted_by=None, last_updated_by=None):
         self.inserted_by = inserted_by
         self.last_updated_by = last_updated_by
 

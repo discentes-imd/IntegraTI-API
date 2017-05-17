@@ -9,10 +9,11 @@ from datetime import datetime
 
 # Import the database object from the main app module
 from app import db
-from app.mod_events.models import EventType
 
 # Import module models (i.e. User)
-# from app.mod_event.models import User
+from app.mod_events.models import EventType
+from app.mod_events.models import Event
+from app.mod_events.models import Tag
 
 from app.mod_events.controllers import mod_event, ns
 from flask import request
@@ -26,15 +27,16 @@ from app.utils import msg
 
 event = ns.model('event', {
     'id_event': fields.Integer,
-    'title': fields.String,
-    'description': fields.String,
-    'date_event_start': fields.DateTime,
-    'date_event_end': fields.DateTime,
-    'location': fields.String,
-    'url': fields.String,
-    'help': fields.Boolean,
-    'event_type_id': fields.Integer,
-    'tags': fields.List(fields.String, required=False)
+    'title': fields.String(required=True),
+    'description': fields.String(required=True),
+    'date_start': fields.DateTime(required=True),
+    'date_end': fields.DateTime(required=True),
+    'location': fields.String(required=True),
+    'url': fields.String(required=True),
+    'need_help': fields.Boolean(required=True),
+    'id_event_type': fields.Integer,
+    'tags': fields.List(fields.Integer),
+    'files': fields.List(fields.Integer)
 })
 
 event_type = ns.model('event_type', {
@@ -43,78 +45,73 @@ event_type = ns.model('event_type', {
     'description': fields.String
 })
 
-event_file = ns.model('event_file', {
-    'id_event_file': fields.Integer,
-    'id_event': fields.Integer,
-    'id_file': fields.Integer
-})
 
-event_tag = ns.model('event_tag', {
-    'id_tag': fields.Integer,
-    'id_event': fields.Integer,
-    'id_event_tag': fields.Integer
-})
-
-
+# TODO: Fazer parte referentes a relacionamentos entre tabelas e fazer upload de arquivos
+# TODO: O put e o post ainda não funcionam devido a questão dos relacionamentos
+# TODO: Definir como será o json do query
 @ns.route('/<int:id>')
 @ns.doc(params={'id': 'Event ID'})
 class EventController(Resource):
-
-    @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
-                       400: 'Id não é do tipo int',
-                       404: 'Não foi encontrado o evento com a id especificada',
-                       200: 'Retorna o modelo evento no corpo da request'})
+    @ns.response(403, 'User is not logged or not have permission')
+    @ns.response(400, 'ID is not int')
+    @ns.response(404, 'Not Found')
+    @ns.response(200, 'Returns the event model on the body of the response', event)
     @ns.marshal_with(event)
     def get(self, id):
         '''Get an event by ID'''
-        return {
-                    'id_event': id,
-                    'title': 'fgggffg',
-                    'description': 'fgfggfgf',
-                    'date_event_start': datetime(2017, 12, 24),
-                    'date_event_end': datetime(2017, 12, 24),
-                    'location': 'fgfgfdggf',
-                    'url': 'rgfgffggf',
-                    'help': True,
-                    'event_type_id': 123,
-                    'tags': ['tag1', 'tag2', 'tag3']
-                }, 200
+        ev = Event.query.filter(Event.disabled == 0).filter(Event.id_event == id).first()
+        abort_if_none(ev, 404, 'Not Found')
+        return ev
 
-    @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
-                       400: 'Id não é do tipo int ou o modelo está errado',
-                       404: 'Não foi encontrado o evento com a id especificada',
-                       200: 'Retorna o modelo evento no corpo da request'})
+    @ns.response(403, 'User is not logged or not have permission')
+    @ns.response(400, 'ID is not int')
+    @ns.response(404, 'Not Found')
+    @ns.response(200, 'Successfully updated', event)
     @ns.expect(event)
     def put(self, id):
         '''Update an event by ID'''
-        return {'msg': 'nada no put'}
+        ev = Event.query.filter(Event.disabled == 0).filter(Event.id_event == id).first()
+        abort_if_none(ev, 404, 'Not Found')
+        update_object(ev, request.json)
+        db.session.commit()
+        return msg('success!')
 
-    @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
-                       400: 'Id não é do tipo int',
-                       404: 'Não foi encontrado o evento com a id especificada',
-                       200: 'O evento foi desabilitado no db'})
+    @ns.response(403, 'User is not logged or not have permission')
+    @ns.response(400, 'ID is not int')
+    @ns.response(404, 'Not Found')
+    @ns.response(200, 'Successfully updated', event)
     def delete(self, id):
         '''Delete an event by ID'''
-        return {'msg': 'nada no delete'}
+        ev = Event.query.filter(Event.disabled == 0).filter(Event.id_event == id).first()
+        abort_if_none(ev, 404, 'Not Found')
+        ev.disabled = 1
+        db.session.commit()
+        return msg('disabled')
 
 
 @ns.route('/')
 class EventPostController(Resource):
-    @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
-                       400: 'Algum dos argumentos está errado',
-                       200: 'Retorna no corpo da request uma lista de eventos encontrados'})
+    @ns.response(403, 'User is not logged or not have permission')
+    @ns.response(400, 'The query json is wrong')
+    @ns.response(200, 'Return an event list that matched criteria', event)
     @ns.marshal_with(event)
     def get(self):
         '''Get an event list'''
-        return {'msg': 'nada aqui'}
+        return Event.query.all()
 
-    @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
-                       400: 'O modelo está com partes faltando ou com tipos diferentes',
-                       200: 'Retorna o id do evento no corpo da request'})
+    @ns.response(403, 'User is not logged or not have permission')
+    @ns.response(400, 'The model is malformed')
+    @ns.response(200, 'Added', event)
     @ns.expect(event)
     def post(self):
         '''Create a new event'''
-        return {'msg': 'nada no post'}
+        ev = Event()
+        # update the event
+        update_object(ev, request.json)
+        # submit objects to db
+        db.session.add(ev)
+        db.session.commit()
+        return msg(ev.id_event, 'id')
 
 
 @ns.route('/type/<int:id>')
