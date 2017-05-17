@@ -24,9 +24,9 @@ Veja nossa [wiki](https://github.com/bti-imd/IntegraTI-API/wiki). E se você pre
     - No Unix ou MacOS, execute no terminal (bash): ```source env/bin/activate```
 - Rode o ```pip``` para instalar as dependências do sistema com ```pip install -r requirements.txt```.
 - Termine de configurar o banco de dados adicionando as tabelas dele através do console do seu SO:
-    - Rode ```python manage.py db init```: inicia
-    - Rode ```python manage.py db migrate```: migra
-    - Rode ```python manage.py db upgrade```: atualiza
+    - Rode ```python manage.py db init```: Inicializa o banco de dados pelos models
+    - Rode ```python manage.py db migrate```: Cria uma migração com nase nas alterações feitas dos models
+    - Rode ```python manage.py db upgrade```: Altera o banco de dados com base nas migrações criadas
 
 ## Rodando o servidor
 
