@@ -3,10 +3,18 @@ Veja nossa [wiki](https://github.com/bti-imd/IntegraTI-API/wiki).
 
 # Instruções
 ## Primeiro setup
-1. Baixar o [Python 3.6.1](https://www.python.org/ftp/python/3.6.1/python-3.6.1.exe)
-2. Criar um virtual environment com 'python -m venv env'
-3. Ativar o virutal env
-    - On Windows, run: 'env\Scripts\activate.bat'
-    - On Unix or MacOS, run: 'source env/bin/activate'
-4. rodar pip install com 'pip install -r requirements.txt'
-5. rodar o hello world com 'python hello_flask.py'
+- Baixar o [Python 3.6.1](https://www.python.org/ftp/python/3.6.1/python-3.6.1.exe)
+- Baixar o [MySQL](https://dev.mysql.com/downloads/installer/)
+    - configurar o user ```root``` com password ```root```
+    - criar database IntegraTI com ```create database IntegraTI;``` no MySQL
+- Criar arquivo ```logs/error.log```
+- Criar um virtual environment com ```python -m venv env```
+- Ativar o virutal env
+    - On Windows, run: ```env\Scripts\activate.bat```
+    - On Unix or MacOS, run: ```source env/bin/activate```
+- Rodar pip install com 'pip install -r requirements.txt'
+- Criar tabelas com o manager da aplicação
+    - rodar ```python manage.py db init```
+    - rodar ```python manage.py db migrate```
+    - rodar ```python manage.py db upgrade```
+- rodar a aplicação com ```python run.py```
