@@ -158,7 +158,7 @@ class Tag(Base):
     name = db.Column(db.String(25), unique=True)
     slug = db.Column(db.String(50), unique=True)
 
-    def __init__(self, name, slug):
+    def __init__(self, name=None, slug=None):
         self.name = name
         self.slug = slug
 

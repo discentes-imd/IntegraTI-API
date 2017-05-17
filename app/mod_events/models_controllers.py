@@ -25,6 +25,11 @@ from app.utils import msg
 
 # ns = Namespace('event', description='Operations related to events')
 
+tag_m = ns.model('tag', {
+    'name': fields.String,
+    'slug': fields.String
+})
+
 event = ns.model('event', {
     'id_event': fields.Integer,
     'title': fields.String(required=True),
@@ -35,7 +40,7 @@ event = ns.model('event', {
     'url': fields.String(required=True),
     'need_help': fields.Boolean(required=True),
     'id_event_type': fields.Integer,
-    'tags': fields.List(fields.Integer),
+    'tags': fields.List(fields.Nested(tag_m)),
     'files': fields.List(fields.Integer)
 })
 
@@ -51,10 +56,10 @@ event_type = ns.model('event_type', {
 # TODO: Definir como será o json do query
 @ns.route('/<int:id>')
 @ns.doc(params={'id': 'Event ID'})
+@ns.response(403, 'User is not logged or not have permission')
+@ns.response(400, 'ID is not int')
+@ns.response(404, 'Not Found')
 class EventController(Resource):
-    @ns.response(403, 'User is not logged or not have permission')
-    @ns.response(400, 'ID is not int')
-    @ns.response(404, 'Not Found')
     @ns.response(200, 'Returns the event model on the body of the response', event)
     @ns.marshal_with(event)
     def get(self, id):
@@ -63,9 +68,6 @@ class EventController(Resource):
         abort_if_none(ev, 404, 'Not Found')
         return ev
 
-    @ns.response(403, 'User is not logged or not have permission')
-    @ns.response(400, 'ID is not int')
-    @ns.response(404, 'Not Found')
     @ns.response(200, 'Successfully updated', event)
     @ns.expect(event)
     def put(self, id):
@@ -76,9 +78,6 @@ class EventController(Resource):
         db.session.commit()
         return msg('success!')
 
-    @ns.response(403, 'User is not logged or not have permission')
-    @ns.response(400, 'ID is not int')
-    @ns.response(404, 'Not Found')
     @ns.response(200, 'Successfully updated', event)
     def delete(self, id):
         '''Delete an event by ID'''
@@ -90,8 +89,8 @@ class EventController(Resource):
 
 
 @ns.route('/')
+@ns.response(403, 'User is not logged or not have permission')
 class EventPostController(Resource):
-    @ns.response(403, 'User is not logged or not have permission')
     @ns.response(400, 'The query json is wrong')
     @ns.response(200, 'Return an event list that matched criteria', event)
     @ns.marshal_with(event)
@@ -99,15 +98,20 @@ class EventPostController(Resource):
         '''Get an event list'''
         return Event.query.all()
 
-    @ns.response(403, 'User is not logged or not have permission')
     @ns.response(400, 'The model is malformed')
     @ns.response(200, 'Added', event)
     @ns.expect(event)
     def post(self):
         '''Create a new event'''
         ev = Event()
-        # update the event
+        # copy the tags dict
+        tags_model = request.json['tags'][:]
+        del request.json['tags']
         update_object(ev, request.json)
+        for tm in tags_model:
+            tag = Tag()
+            update_object(tag, tm)
+            ev.tags.append(tag)
         # submit objects to db
         db.session.add(ev)
         db.session.commit()
@@ -116,10 +120,11 @@ class EventPostController(Resource):
 
 @ns.route('/type/<int:id>')
 @ns.doc(params={'id': 'Event Type ID'})
+@ns.response(403, 'User is not logged or not have permission')
+@ns.response(400, 'ID is not int')
+@ns.response(404, 'Not Found')
 class EventTypeController(Resource):
-    @ns.response(403, 'User is not logged or not have permission')
-    @ns.response(400, 'ID is not int')
-    @ns.response(404, 'Not Found')
+
     @ns.response(200, 'Returns the event model on the body of the response', event_type)
     @ns.marshal_with(event_type)
     def get(self, id):
@@ -129,9 +134,6 @@ class EventTypeController(Resource):
         abort_if_none(et, 404, 'Not Found')
         return et
 
-    @ns.response(403, 'User is not logged or not have permission')
-    @ns.response(400, 'ID is not int')
-    @ns.response(404, 'Not Found')
     @ns.response(200, 'Event altered')
     @ns.expect(event_type)
     def put(self, id):
@@ -143,9 +145,6 @@ class EventTypeController(Resource):
         db.session.commit()
         return msg('altered')
 
-    @ns.response(403, 'User is not logged or not have permission')
-    @ns.response(400, 'ID is not int')
-    @ns.response(404, 'Not Found')
     @ns.response(200, 'Event disabled')
     def delete(self, id):
         '''Delete an event_type by ID'''
@@ -158,8 +157,9 @@ class EventTypeController(Resource):
 
 
 @ns.route('/type')
+@ns.response(403, 'User is not logged or not have permission')
 class EventTypePostController(Resource):
-    @ns.response(403, 'User is not logged or not have permission')
+
     @ns.response(400, 'One of the arguments is malformed')
     @ns.response(200, 'Return an list of events that matched criteria', event_type)
     @ns.marshal_with(event_type)
@@ -167,7 +167,6 @@ class EventTypePostController(Resource):
         '''Get a event_type list'''
         return EventType.query.filter(EventType.disabled == 0).all()
 
-    @ns.response(403, 'User is not logged or not have permission')
     @ns.response(400, 'The model is malformed')
     @ns.response(200, 'Event inserted')
     @ns.expect(event_type)
