@@ -2,7 +2,7 @@
 Veja nossa [wiki](https://github.com/bti-imd/IntegraTI-API/wiki).
 
 # Instruções
-## Primeiro setup
+## Configurando ambiente
 - Baixar o [Python 3.6.1](https://www.python.org/ftp/python/3.6.1/python-3.6.1.exe)
 - Baixar o [MySQL](https://dev.mysql.com/downloads/installer/)
     - configurar o user ```root``` com password ```root```
@@ -13,6 +13,8 @@ Veja nossa [wiki](https://github.com/bti-imd/IntegraTI-API/wiki).
     - On Windows, run: ```env\Scripts\activate.bat```
     - On Unix or MacOS, run: ```source env/bin/activate```
 - Rodar pip install com 'pip install -r requirements.txt'
+
+## Rodando aplicação
 - Criar tabelas com o manager da aplicação
     - rodar ```python manage.py db init```
     - rodar ```python manage.py db migrate```
