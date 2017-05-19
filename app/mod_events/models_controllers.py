@@ -51,8 +51,7 @@ event_type = ns.model('event_type', {
 })
 
 
-# TODO: Fazer parte referentes a relacionamentos entre tabelas e fazer upload de arquivos
-# TODO: O put e o post ainda não funcionam devido a questão dos relacionamentos
+# TODO: Fazer parte referentes a upload de arquivos
 # TODO: Definir como será o json do query
 @ns.route('/<int:id>')
 @ns.doc(params={'id': 'Event ID'})
@@ -78,7 +77,7 @@ class EventController(Resource):
         db.session.commit()
         return msg('success!')
 
-    @ns.response(200, 'Successfully updated', event)
+    @ns.response(200, 'Disabled on db')
     def delete(self, id):
         '''Delete an event by ID'''
         ev = Event.query.filter(Event.disabled == 0).filter(Event.id_event == id).first()
@@ -109,6 +108,10 @@ class EventPostController(Resource):
         del request.json['tags']
         update_object(ev, request.json)
         for tm in tags_model:
+            t = Tag.query.filter(Tag.name == tm['name']).first()
+            if t is not None:
+                ev.tags.append(t)
+                continue
             tag = Tag()
             update_object(tag, tm)
             ev.tags.append(tag)

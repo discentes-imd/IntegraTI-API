@@ -153,6 +153,7 @@ class Event(Base):
         self.url = url
         self.need_help = need_help
 
+
 class Tag(Base):
     id_tag = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(25), unique=True)
@@ -161,6 +162,7 @@ class Tag(Base):
     def __init__(self, name=None, slug=None):
         self.name = name
         self.slug = slug
+
 
 class File(Base):
     id_file = db.Column(db.Integer, primary_key=True)
