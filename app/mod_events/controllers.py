@@ -16,6 +16,20 @@ ns = Namespace('event', description='Operations related to events')
 
 from app.mod_events import models_controllers
 
+
+event_file = ns.model('event_file', {
+    'id_event_file': fields.Integer,
+    'id_event': fields.Integer,
+    'id_file': fields.Integer
+})
+
+event_tag = ns.model('event_tag', {
+    'id_tag': fields.Integer,
+    'id_event': fields.Integer,
+    'id_event_tag': fields.Integer
+})
+
+
 @ns.route('/<int:event_id>/tag/<int:tag_id>')
 class EventTagDeleteController(Resource):
     @ns.doc(responses={403: 'Usuario não está logado ou não tem permissão',
