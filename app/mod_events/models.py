@@ -8,7 +8,7 @@ TODO: maybe these constructors are bad designed (do they need
 # pylint: disable = C0111, R0903, C0103
 
 from app import db
-from sqlalchemy.ext.declarative import declared_attr
+from app.mod_shared.models import Base
 
 
 # Many-to-many helper tables (for public access, use models only) -----------
@@ -71,55 +71,8 @@ event_participation = db.Table(
 
 
 # Models and their simple relantionships -------------------------------------
-def get_id():
-    return 2
 
-class Base(db.Model):
-    __abstract__ = True
 
-    disabled = db.Column(db.Boolean, default=0)
-    inserted_since = db.Column(db.DateTime, default=db.func.now())
-    last_updated_since = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
-
-    @declared_attr
-    def inserted_by(cls):
-        return db.Column(db.Integer, db.ForeignKey('user.id_user'),
-                         default=get_id())
-
-    @declared_attr
-    def last_updated_by(cls):
-        return db.Column(db.Integer, db.ForeignKey('user.id_user'),
-                         default=get_id(), onupdate=get_id())
-class User(Base):
-    id_user = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(80))
-    email = db.Column(db.String(50), unique=True)
-    sigaa_registration_number = db.Column(db.String(15), unique=True)
-    sigaa_user_name = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(64))
-    id_photo_file = db.Column(db.Integer, db.ForeignKey('file.id_file'))
-    event_participations = db.relationship(
-        'Event',
-        secondary=event_participation,
-        backref=db.backref('participating_users', lazy='dynamic')
-    )
-    user_interests = db.relationship(
-        'Tag',
-        secondary=user_interest,
-        backref=db.backref('interested_users', lazy='dynamic')
-    )
-
-    def __init__(self, name, email, sigaa_registration_number, sigaa_user_name,
-                 password, id_photo_file, inserted_by, last_updated_by):
-        self.inserted_by = inserted_by
-        self.last_updated_by = last_updated_by
-
-        self.name = name
-        self.email = email
-        self.sigaa_registration_number = sigaa_registration_number
-        self.sigaa_user_name = sigaa_user_name
-        self.password = password
-        self.id_photo_file = id_photo_file
 
 
 class Event(Base):
@@ -144,10 +97,7 @@ class Event(Base):
     )
 
     def __init__(self, title=None, description=None, date_start=None, date_end=None,
-                 location=None, url=None, need_help=None, inserted_by=None, last_updated_by=None):
-        self.inserted_by = inserted_by
-        self.last_updated_by = last_updated_by
-
+                 location=None, url=None, need_help=None):
         self.title = title
         self.description = description
         self.date_start = date_start
@@ -167,29 +117,11 @@ class Tag(Base):
         self.slug = slug
 
 
-class File(Base):
-    id_file = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(100))
-    description = db.Column(db.String(255))
-    path = db.Column(db.String(255), unique=True)
-
-    def __init__(self, name, description, path, inserted_by, last_updated_by):
-        self.inserted_by = inserted_by
-        self.last_updated_by = last_updated_by
-
-        self.name = name
-        self.description = description
-        self.path = path
-
-
 class EventType(Base):
     id_event_type = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(50), unique=True)
     description = db.Column(db.String(255))
 
-    def __init__(self, name, description, inserted_by, last_updated_by):
-        self.inserted_by = inserted_by
-        self.last_updated_by = last_updated_by
-
+    def __init__(self, name, description):
         self.name = name
         self.description = description
