@@ -27,7 +27,7 @@ tag_m = ns.model('tag', {
     'slug': fields.String
 })
 
-event = ns.model('event', {
+event_m = ns.model('event', {
     'id_event': fields.Integer,
     'title': fields.String(required=True),
     'description': fields.String(required=True),
@@ -41,7 +41,7 @@ event = ns.model('event', {
     'files': fields.List(fields.Integer)
 })
 
-event_type = ns.model('event_type', {
+event_type_m = ns.model('event_type', {
     'id_event_type': fields.Integer,
     'name': fields.String,
     'description': fields.String
@@ -56,16 +56,16 @@ event_type = ns.model('event_type', {
 @ns.response(400, 'ID is not int')
 @ns.response(404, 'Not Found')
 class EventController(Resource):
-    @ns.response(200, 'Returns the event model on the body of the response', event)
-    @ns.marshal_with(event)
+    @ns.response(200, 'Returns the event model on the body of the response', event_m)
+    @ns.marshal_with(event_m)
     def get(self, id):
         '''Get an event by ID'''
         ev = Event.query.filter(Event.disabled == 0).filter(Event.id_event == id).first()
         abort_if_none(ev, 404, 'Not Found')
         return ev
 
-    @ns.response(200, 'Successfully updated', event)
-    @ns.expect(event)
+    @ns.response(200, 'Successfully updated', event_m)
+    @ns.expect(event_m)
     def put(self, id):
         '''Update an event by ID'''
         ev = Event.query.filter(Event.disabled == 0).filter(Event.id_event == id).first()
@@ -88,15 +88,15 @@ class EventController(Resource):
 @ns.response(403, 'User is not logged or not have permission')
 class EventPostController(Resource):
     @ns.response(400, 'The query json is wrong')
-    @ns.response(200, 'Return an event list that matched criteria', event)
-    @ns.marshal_with(event)
+    @ns.response(200, 'Return an event list that matched criteria', event_m)
+    @ns.marshal_with(event_m)
     def get(self):
         '''Get an event list'''
         return Event.query.all()
 
     @ns.response(400, 'The model is malformed')
-    @ns.response(200, 'Added', event)
-    @ns.expect(event)
+    @ns.response(200, 'Added', event_m)
+    @ns.expect(event_m)
     def post(self):
         '''Create a new event'''
         ev = Event()
@@ -125,8 +125,8 @@ class EventPostController(Resource):
 @ns.response(404, 'Not Found')
 class EventTypeController(Resource):
 
-    @ns.response(200, 'Returns the event model on the body of the response', event_type)
-    @ns.marshal_with(event_type)
+    @ns.response(200, 'Returns the event model on the body of the response', event_type_m)
+    @ns.marshal_with(event_type_m)
     def get(self, id):
         '''Get an event_type by ID'''
         et = EventType.query.filter(EventType.disabled == 0).filter(EventType.id_event_type == id)
@@ -135,7 +135,7 @@ class EventTypeController(Resource):
         return et
 
     @ns.response(200, 'Event altered')
-    @ns.expect(event_type)
+    @ns.expect(event_type_m)
     def put(self, id):
         '''Update an event_type by ID'''
         et = EventType.query.filter(EventType.disabled == 0).filter(EventType.id_event_type == id)
@@ -161,15 +161,15 @@ class EventTypeController(Resource):
 class EventTypePostController(Resource):
 
     @ns.response(400, 'One of the arguments is malformed')
-    @ns.response(200, 'Return an list of events that matched criteria', event_type)
-    @ns.marshal_with(event_type)
+    @ns.response(200, 'Return an list of events that matched criteria', event_type_m)
+    @ns.marshal_with(event_type_m)
     def get(self):
         '''Get a event_type list'''
         return EventType.query.filter(EventType.disabled == 0).all()
 
     @ns.response(400, 'The model is malformed')
     @ns.response(200, 'Event inserted')
-    @ns.expect(event_type)
+    @ns.expect(event_type_m)
     def post(self):
         '''Create a new event_type'''
         et = EventType(request.json['name'], request.json['description'], 1, 1)
