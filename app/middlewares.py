@@ -13,6 +13,7 @@ def verify_route(response):
 
 
 # TODO: Implementar a função verify token
+# TODO: Depois de decodificar o token adicionar o id_user ao objeto request
 """
 Verify if the token is valid, not expired and not blacklisted
 """
