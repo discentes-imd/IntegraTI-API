@@ -8,11 +8,15 @@ import logging
 from logging.handlers import RotatingFileHandler
 import pymysql
 from app.middlewares import verify_route, verify_token
+import random
 
 pymysql.install_as_MySQLdb()
 
 # Define the WSGI application object
 app = Flask(__name__)
+
+# Generate a random secret number
+app.secret_key = random.random()
 
 # Register middlewares
 app.after_request(verify_route)

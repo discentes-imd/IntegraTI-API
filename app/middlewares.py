@@ -12,10 +12,11 @@ def verify_route(response):
     return response
 
 
+# TODO: Implementar a função verify token
 """
 Verify if the token is valid, not expired and not blacklisted
 """
 def verify_token(response):
     if not request.headers.has_key('Authorization'):
         return response
-    return response
+
