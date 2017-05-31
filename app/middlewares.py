@@ -1,4 +1,5 @@
 from flask import Response, request
+from flask_restplus import abort
 from app.utils import msg
 from app.routes_need_login_config import routes
 from werkzeug.security import generate_password_hash
@@ -12,10 +13,10 @@ def verify_route(response):
     """
     for route in routes:
         if route[0] == str(request.url_rule) and request.method in route[1] and 'Authorization' not in request.headers:
-            return Response(str(msg('Authorization header missing!')), 400)
+            return Response(str(msg('Authorization header missing')), 403)
     return response
 
-
+# TODO: Verificar porque a request está continuando depois do abort
 # TODO: Implementar a função verify token
 # TODO: Depois de decodificar o token adicionar o id_user ao objeto request
 # TODO: Implementar blacklist para tokens (logout por ex.)
@@ -34,7 +35,7 @@ def verify_token(response):
 
     try:
         payload = jwt.decode(request.headers['Authorization'], config.SECRET_KEY)
-        config.curent_user = payload['id_user']
+        config.current_user = payload['id_user']
     except jwt.ExpiredSignatureError:
         return Response(str(msg('Error: token expired')), 403)
     except jwt.DecodeError:
