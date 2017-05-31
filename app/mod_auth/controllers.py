@@ -55,7 +55,6 @@ user_m_expect = ns.model('user', {
 # TODO: Implementar permissões de usuário
 
 
-
 # Define the authentication controller. POST is for login and DELETE for logout.
 @ns.route('/login/')
 @ns.response(403, 'Login or logout failed')
@@ -65,6 +64,7 @@ class AuthController(Resource):
     @ns.expect(user_auth_m)
     @ns.marshal_with(token_m)
     def post(self):
+        'Login the user'
         username = request.json['username']
         password = request.json['password']
         us = User.query.filter(User.disabled == 0).filter(User.sigaa_user_name == username).filter(User.password == password)
@@ -79,6 +79,7 @@ class AuthController(Resource):
 
     @ns.marshal_with(msg_m)
     def delete(self):
+        'Logout the user'
         pass
 
 
@@ -92,6 +93,7 @@ class UserController(Resource):
     @ns.marshal_with(user_m)
     @ns.response(200, 'Returns the user model on the body of the response')
     def get(self, id):
+        'Get an user by ID'
         us = User.query.filter(User.disabled == 0).filter(User.id_user == id).first()
         abort_if_none(us, 404, 'not found')
         return us
@@ -99,6 +101,7 @@ class UserController(Resource):
     @ns.response(200, 'User updated', msg_m)
     @ns.expect(user_m_expect)
     def put(self, id):
+        'Update an user by ID'
         us = User.query.filter(User.disabled == 0).filter(User.id_user == id).first()
         abort_if_none(us, 404, 'not found')
         update_object(us, request.json)
@@ -107,6 +110,7 @@ class UserController(Resource):
 
     @ns.response(200, 'User disabled on db', msg_m)
     def delete(self, id):
+        'Delete an user by ID'
         us = User.query.filter(User.disabled == 0).filter(User.id_user == id).first()
         abort_if_none(us, 404, 'not found')
         us.disabled = 1
@@ -122,12 +126,14 @@ class UserPostController(Resource):
     @ns.response(200, 'Return an list of users that matched criteria', user_m)
     @ns.marshal_with(user_m)
     def get(self):
+        'Get an list of users'
         return User.query.filter(User.disabled == 0).all()
 
     @ns.response(400, 'The model is malformed')
     @ns.response(200, 'User inserted', msg_m)
     @ns.expect(user_m_expect)
     def post(self):
+        'Create a new user'
         us = User()
         update_object(us, request.json)
         db.session.add(us)
