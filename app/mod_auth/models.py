@@ -25,8 +25,8 @@ class User(Base):
         backref=db.backref('interested_users', lazy='dynamic')
     )
 
-    def __init__(self, name, email, sigaa_registration_number, sigaa_user_name,
-                 password, id_photo_file):
+    def __init__(self, name=None, email=None, sigaa_registration_number=None, sigaa_user_name=None,
+                 password=None, id_photo_file=None):
         self.name = name
         self.email = email
         self.sigaa_registration_number = sigaa_registration_number

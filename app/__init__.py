@@ -44,13 +44,14 @@ def not_found(error):
 from app.mod_events import models
 
 # Import a module / component using its blueprint handler variable (mod_auth)
-from app.mod_auth.controllers import mod_auth as auth_module
+from app.mod_auth.controllers import mod_auth as auth_module, ns as ns_auth
 from app.mod_events.controllers import mod_event as event_module, ns as ns_event
 
 # Register blueprint(s)
 app.register_blueprint(auth_module)
 app.register_blueprint(event_module)
 api.add_namespace(ns_event)
+api.add_namespace(ns_auth)
 # app.register_blueprint(xyz_module)
 # ..
 

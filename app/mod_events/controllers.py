@@ -2,21 +2,14 @@
 from flask import Blueprint, request, flash, g, session, redirect, url_for
 from flask_restplus import Namespace, Resource, fields, reqparse
 
-# Import password / encryption helper tools
-#from werkzeug import check_password_hash, generate_password_hash
-
 # Import the database object from the main app module
 from app import db
 
 # Import module models (i.e. User)
-from app.mod_events.models import EventType
-from app.mod_events.models import Event
-from app.mod_events.models import Tag
+from app.mod_events.models import EventType, Event, Tag
 
 # Import utils
-from app.utils import update_object
-from app.utils import abort_if_none
-from app.utils import msg
+from app.utils import update_object, abort_if_none, msg
 
 # Define the blueprint: 'event', set its url prefix: app.url/event
 mod_event = Blueprint('event', __name__, url_prefix='/event')
@@ -172,7 +165,7 @@ class EventTypePostController(Resource):
     @ns.expect(event_type_m)
     def post(self):
         '''Create a new event_type'''
-        et = EventType(request.json['name'], request.json['description'], 1, 1)
+        et = EventType(request.json['name'], request.json['description'])
         db.session.add(et)
         db.session.commit()
         return msg(et.id_event_type, 'id')
