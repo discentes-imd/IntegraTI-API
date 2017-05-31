@@ -34,3 +34,13 @@ class File(Base):
         self.name = name
         self.description = description
         self.path = path
+
+
+class Tag(Base):
+    id_tag = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(25), unique=True)
+    slug = db.Column(db.String(50), unique=True)
+
+    def __init__(self, name=None, slug=None):
+        self.name = name
+        self.slug = slug

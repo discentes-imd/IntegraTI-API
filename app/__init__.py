@@ -35,13 +35,17 @@ migrate = Migrate(app, db)
 manager = Manager(app)
 manager.add_command('db', MigrateCommand)
 
+
 # Sample HTTP error handling
 @app.errorhandler(404)
 def not_found(error):
     app.logger.error(error)
     return error
 
+from app.mod_shared import models
+from app.mod_auth import models
 from app.mod_events import models
+
 
 # Import a module / component using its blueprint handler variable (mod_auth)
 from app.mod_auth.controllers import mod_auth as auth_module

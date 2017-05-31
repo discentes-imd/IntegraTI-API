@@ -2,16 +2,12 @@
 from flask import Blueprint, request, flash, g, session, redirect, url_for
 from flask_restplus import Namespace, Resource, fields, reqparse
 
-# Import password / encryption helper tools
-#from werkzeug import check_password_hash, generate_password_hash
-
 # Import the database object from the main app module
 from app import db
 
 # Import module models (i.e. User)
-from app.mod_events.models import EventType
-from app.mod_events.models import Event
-from app.mod_events.models import Tag
+from app.mod_events.models import EventType, Event
+from app.mod_shared.models import Tag
 
 # Import utils
 from app.utils import update_object
@@ -83,7 +79,7 @@ class EventController(Resource):
         db.session.commit()
         return msg('disabled')
 
-
+gi
 @ns.route('/')
 @ns.response(403, 'User is not logged or not have permission')
 class EventPostController(Resource):

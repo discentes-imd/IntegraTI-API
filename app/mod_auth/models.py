@@ -6,6 +6,7 @@ from app.mod_shared.models import Base
 from app.mod_events.models import user_interest
 from app.mod_events.models import event_participation
 
+
 class User(Base):
     id_user = db.Column(db.Integer, primary_key=True)
     name = db.Column(db.String(80))

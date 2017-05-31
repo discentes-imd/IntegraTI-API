@@ -71,10 +71,6 @@ event_participation = db.Table(
 
 
 # Models and their simple relantionships -------------------------------------
-
-
-
-
 class Event(Base):
     id_event = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(50))
@@ -105,16 +101,6 @@ class Event(Base):
         self.location = location
         self.url = url
         self.need_help = need_help
-
-
-class Tag(Base):
-    id_tag = db.Column(db.Integer, primary_key=True)
-    name = db.Column(db.String(25), unique=True)
-    slug = db.Column(db.String(50), unique=True)
-
-    def __init__(self, name=None, slug=None):
-        self.name = name
-        self.slug = slug
 
 
 class EventType(Base):
