@@ -7,7 +7,7 @@ from flask_restplus import Api
 import logging
 from logging.handlers import RotatingFileHandler
 import pymysql
-from app.middlewares import verify_authorization_header
+from app.middlewares import verify_route, verify_token
 
 pymysql.install_as_MySQLdb()
 
@@ -15,7 +15,8 @@ pymysql.install_as_MySQLdb()
 app = Flask(__name__)
 
 # Register middlewares
-app.after_request(verify_authorization_header)
+app.after_request(verify_route)
+app.after_request(verify_token)
 
 # Define Api application object
 api = Api(app, version='0.5a', title='IntegraTI-API',
