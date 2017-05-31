@@ -22,7 +22,7 @@ def verify_route(response):
 # TODO: Implementar a validação dos modelos de entrada
 
 def clear_user():
-    config.current_user = 0
+    config.current_user = 1
 
 
 def verify_token(response):

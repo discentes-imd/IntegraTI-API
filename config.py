@@ -1,6 +1,6 @@
 import random
 
-current_user = 0
+current_user = 1
 # Statement for enabling the development environment
 DEBUG = True
 
@@ -27,7 +27,7 @@ CSRF_ENABLED     = True
 CSRF_SESSION_KEY = "secret"
 
 # Secret key for signing cookies
-SECRET_KEY = random.random()
+SECRET_KEY = "thesecretsss"
 
 LOGGING_FORMAT = '[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
 LOGGING_LOCATION = 'logs/error.log'

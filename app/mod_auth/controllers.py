@@ -14,7 +14,8 @@ from app.mod_auth.models import User
 
 # Import utils
 from app.utils import abort_if_none, msg, update_object
-from app import app
+
+import config
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
 mod_auth = Blueprint('auth', __name__, url_prefix='/auth')
@@ -47,7 +48,8 @@ user_m_expect = ns.model('user', {
     'email': fields.String,
     'sigaa_registration_number': fields.String,
     'sigaa_user_name': fields.String,
-    'id_photo_file': fields.Integer
+    'id_photo_file': fields.Integer,
+    'password': fields.String
 })
 
 
@@ -72,7 +74,7 @@ class AuthController(Resource):
         abort_if_none(us, 403, 'Username or password incorrect')
         token = jwt.encode(
             {'id_user': us.id_user},
-            app.secret_key,
+            config.SECRET_KEY,
             algorithm='HS256'
         )
         return msg(token, 'token')
