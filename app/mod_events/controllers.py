@@ -153,7 +153,7 @@ class EventTypeController(Resource):
         return msg('disabled')
 
 
-@ns.route('/type')
+@ns.route('/type/')
 @ns.response(403, 'User is not logged or not have permission')
 @ns.header('Authorization', 'The authorization token')
 class EventTypePostController(Resource):

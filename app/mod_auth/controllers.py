@@ -83,7 +83,6 @@ class AuthController(Resource):
         pass
 
 
-
 @ns.route('/user/<int:id>')
 @ns.response(403, 'User is not logged or not have permission')
 @ns.response(400, 'ID is not int')
