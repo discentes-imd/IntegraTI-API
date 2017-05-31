@@ -71,7 +71,7 @@ class AuthController(Resource):
         us = us.first()
         abort_if_none(us, 403, 'Username or password incorrect')
         token = jwt.encode(
-            {'user_id': us.id_user},
+            {'id_user': us.id_user},
             app.secret_key,
             algorithm='HS256'
         )

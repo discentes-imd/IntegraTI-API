@@ -1,14 +1,10 @@
 from app import db
 from sqlalchemy.ext.declarative import declared_attr
-
-
-def get_id():
-    return 2
+import config
 
 
 class Base(db.Model):
     __abstract__ = True
-
     disabled = db.Column(db.Boolean, default=0)
     inserted_since = db.Column(db.DateTime, default=db.func.now())
     last_updated_since = db.Column(db.DateTime, default=db.func.now(), onupdate=db.func.now())
@@ -16,12 +12,12 @@ class Base(db.Model):
     @declared_attr
     def inserted_by(cls):
         return db.Column(db.Integer, db.ForeignKey('user.id_user'),
-                         default=get_id())
+                         default=config.current_user)
 
     @declared_attr
     def last_updated_by(cls):
         return db.Column(db.Integer, db.ForeignKey('user.id_user'),
-                         default=get_id(), onupdate=get_id())
+                         default=config.current_user, onupdate=config.current_user)
 
 
 class File(Base):

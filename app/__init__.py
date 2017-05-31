@@ -7,20 +7,18 @@ from flask_restplus import Api
 import logging
 from logging.handlers import RotatingFileHandler
 import pymysql
-from app.middlewares import verify_route, verify_token
-import random
+from app.middlewares import verify_route, verify_token, encrypt_password, clear_user
 
 pymysql.install_as_MySQLdb()
 
 # Define the WSGI application object
 app = Flask(__name__)
 
-# Generate a random secret number
-app.secret_key = random.random()
-
 # Register middlewares
 app.after_request(verify_route)
 app.after_request(verify_token)
+app.after_request(encrypt_password)
+app.before_request(clear_user)
 
 # Define Api application object
 api = Api(app, version='0.5a', title='IntegraTI-API',
