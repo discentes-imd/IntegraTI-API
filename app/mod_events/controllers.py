@@ -79,7 +79,7 @@ class EventController(Resource):
         db.session.commit()
         return msg('disabled')
 
-gi
+
 @ns.route('/')
 @ns.response(403, 'User is not logged or not have permission')
 class EventPostController(Resource):
@@ -152,7 +152,7 @@ class EventTypeController(Resource):
         return msg('disabled')
 
 
-@ns.route('/type')
+@ns.route('/type/')
 @ns.response(403, 'User is not logged or not have permission')
 class EventTypePostController(Resource):
 
