@@ -48,6 +48,7 @@ event_type_m = ns.model('event_type', {
 @ns.response(403, 'User is not logged or not have permission')
 @ns.response(400, 'ID is not int')
 @ns.response(404, 'Not Found')
+@ns.header('Authorization', 'The authorization token')
 class EventController(Resource):
     @ns.response(200, 'Returns the event model on the body of the response', event_m)
     @ns.marshal_with(event_m)
@@ -79,6 +80,7 @@ class EventController(Resource):
 
 @ns.route('/')
 @ns.response(403, 'User is not logged or not have permission')
+@ns.header('Authorization', 'The authorization token')
 class EventPostController(Resource):
     @ns.response(400, 'The query json is wrong')
     @ns.response(200, 'Return an event list that matched criteria', event_m)
@@ -116,6 +118,7 @@ class EventPostController(Resource):
 @ns.response(403, 'User is not logged or not have permission')
 @ns.response(400, 'ID is not int')
 @ns.response(404, 'Not Found')
+@ns.header('Authorization', 'The authorization token')
 class EventTypeController(Resource):
 
     @ns.response(200, 'Returns the event model on the body of the response', event_type_m)
@@ -151,6 +154,7 @@ class EventTypeController(Resource):
 
 @ns.route('/type')
 @ns.response(403, 'User is not logged or not have permission')
+@ns.header('Authorization', 'The authorization token')
 class EventTypePostController(Resource):
 
     @ns.response(400, 'One of the arguments is malformed')

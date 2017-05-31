@@ -7,10 +7,15 @@ from flask_restplus import Api
 import logging
 from logging.handlers import RotatingFileHandler
 import pymysql
+from app.middlewares import verify_authorization_header
+
 pymysql.install_as_MySQLdb()
 
 # Define the WSGI application object
 app = Flask(__name__)
+
+# Register middlewares
+app.after_request(verify_authorization_header)
 
 # Define Api application object
 api = Api(app, version='0.5a', title='IntegraTI-API',
@@ -48,6 +53,7 @@ from app.mod_auth.controllers import mod_auth as auth_module, ns as ns_auth
 from app.mod_events.controllers import mod_event as event_module, ns as ns_event
 
 # Register blueprint(s)
+
 app.register_blueprint(auth_module)
 app.register_blueprint(event_module)
 api.add_namespace(ns_event)
