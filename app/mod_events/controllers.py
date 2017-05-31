@@ -6,7 +6,8 @@ from flask_restplus import Namespace, Resource, fields, reqparse
 from app import db
 
 # Import module models (i.e. User)
-from app.mod_events.models import EventType, Event, Tag
+from app.mod_events.models import EventType, Event
+from app.mod_shared.models import Tag
 
 # Import utils
 from app.utils import update_object, abort_if_none, msg
