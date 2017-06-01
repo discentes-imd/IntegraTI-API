@@ -13,7 +13,7 @@ class User(Base):
     email = db.Column(db.String(50), unique=True)
     sigaa_registration_number = db.Column(db.String(15), unique=True)
     sigaa_user_name = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(64))
+    password = db.Column(db.String(255))
     id_photo_file = db.Column(db.Integer, db.ForeignKey('file.id_file'))
     event_participations = db.relationship(
         'Event',

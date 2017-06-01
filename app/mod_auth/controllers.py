@@ -12,6 +12,9 @@ from flask_restplus import Namespace, Resource, fields, reqparse
 # Import module models (i.e. User)
 from app.mod_auth.models import User
 
+# Import password utils
+from werkzeug.security import check_password_hash
+
 # Import utils
 from app.utils import abort_if_none, msg, update_object
 
@@ -69,15 +72,17 @@ class AuthController(Resource):
         'Login the user'
         username = request.json['username']
         password = request.json['password']
-        us = User.query.filter(User.disabled == 0).filter(User.sigaa_user_name == username).filter(User.password == password)
+        us = User.query.filter(User.disabled == 0).filter(User.sigaa_user_name == username)
         us = us.first()
         abort_if_none(us, 403, 'Username or password incorrect')
+        if not check_password_hash(us.password, password):
+            return msg('Username or password incorrect'), 403
         token = jwt.encode(
             {'id_user': us.id_user},
             config.SECRET_KEY,
             algorithm='HS256'
         )
-        return msg(token, 'token')
+        return msg(token.decode('utf-8'), 'token')
 
     @ns.marshal_with(msg_m)
     def delete(self):

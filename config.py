@@ -1,6 +1,5 @@
 import random
 
-current_user = 1
 # Statement for enabling the development environment
 DEBUG = True
 

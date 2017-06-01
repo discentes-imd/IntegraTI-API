@@ -1,20 +1,23 @@
-from flask import Response, request
+from flask import Response, request, abort
 from flask_restplus import abort
 from app.utils import msg
 from app.routes_need_login_config import routes
 from werkzeug.security import generate_password_hash
 import jwt
+from app import cache
 import config
 
 
-def verify_route(response):
+
+def verify_route():
     """
     Verify if the route is in a list of routes that need have the authorization header
     """
     for route in routes:
         if route[0] == str(request.url_rule) and request.method in route[1] and 'Authorization' not in request.headers:
-            return Response(str(msg('Authorization header missing')), 403)
-    return response
+            abort(403, 'Authorization header missing')
+
+
 
 # TODO: Verificar porque a request está continuando depois do abort
 # TODO: Implementar a função verify token
@@ -22,34 +25,32 @@ def verify_route(response):
 # TODO: Implementar blacklist para tokens (logout por ex.)
 # TODO: Implementar a validação dos modelos de entrada
 
-def clear_user():
-    config.current_user = 1
-
-
-def verify_token(response):
+def verify_token():
     """
     Verify if the token is valid, not expired and not blacklisted
     """
-    if 'Authorization' not in request.headers:
-        return response
-
-    try:
-        payload = jwt.decode(request.headers['Authorization'], config.SECRET_KEY)
-        config.current_user = payload['id_user']
-    except jwt.ExpiredSignatureError:
-        return Response(str(msg('Error: token expired')), 403)
-    except jwt.DecodeError:
-        return Response(str(msg('Error: invalid token')), 403)
-    return response
+    if 'Authorization' in request.headers:
+        try:
+            payload = jwt.decode(request.headers['Authorization'], config.SECRET_KEY)
+            cache.current_user = payload['id_user']
+        except jwt.ExpiredSignatureError:
+            abort(403, 'Error: token expired')
+        except jwt.DecodeError:
+            abort(403, 'Error: invalid token')
 
 
-def encrypt_password(response):
+def encrypt_password():
     """
     Verify if the route is for login or user create, then encrypts the password.
-    :param response: flask.Response
-    :return: response: flask.Response
     """
-    if request.url_rule in ['/auth/login/', '/user/create/'] \
-            and request.method == 'POST' and request.json['password'] != '':
+    if str(request.url_rule) == '/auth/user/' and request.method == 'POST':
         request.json['password'] = generate_password_hash(request.json['password'])
+
+
+def reset_current_user(response):
+    cache.current_user = None
+    return response
+
+def set_cors_header(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
     return response

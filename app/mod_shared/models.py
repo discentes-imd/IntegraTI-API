@@ -1,6 +1,6 @@
 from app import db
 from sqlalchemy.ext.declarative import declared_attr
-import config
+from app.cache import get_current_user
 
 
 class Base(db.Model):
@@ -12,12 +12,12 @@ class Base(db.Model):
     @declared_attr
     def inserted_by(cls):
         return db.Column(db.Integer, db.ForeignKey('user.id_user'),
-                         default=config.current_user)
+                         default=get_current_user)
 
     @declared_attr
     def last_updated_by(cls):
         return db.Column(db.Integer, db.ForeignKey('user.id_user'),
-                         default=config.current_user, onupdate=config.current_user)
+                         default=get_current_user, onupdate=get_current_user)
 
 
 class File(Base):

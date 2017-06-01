@@ -20,7 +20,7 @@ def abort_if_none(item, code, msg):
         abort(code, msg)
 
 
-def msg(text, key='msg'):
+def msg(text, key='messsage'):
     """ Returns a Json message with text
     :param text: str
     :param key: str
