@@ -53,4 +53,5 @@ def reset_current_user(response):
 
 def set_cors_header(response):
     response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS, PUT, DELETE'
     return response
