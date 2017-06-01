@@ -52,6 +52,9 @@ def reset_current_user(response):
     return response
 
 def set_cors_header(response):
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, api_key, Authorization, ' \
+                                                       'x-requested-with, Total-Count, Total-Pages, Error-Message'
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS, PUT, DELETE'
+    response.headers['Access-Control-Max-Age:1800'] = '180'
     return response
