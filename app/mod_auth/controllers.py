@@ -28,10 +28,6 @@ msg_m = ns.model('msg', {
     'msg': fields.String
 })
 
-token_m = ns.model('token', {
-    'token': fields.String
-})
-
 user_auth_m = ns.model('user_auth', {
     'username': fields.String(required=True),
     'password': fields.String(required=True)
@@ -67,7 +63,6 @@ user_m_expect = ns.model('user', {
 @ns.header('Authorization', 'The authorization token')
 class AuthController(Resource):
     @ns.expect(user_auth_m)
-    @ns.marshal_with(token_m)
     def post(self):
         'Login the user'
         username = request.json['username']
