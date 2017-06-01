@@ -1,7 +1,11 @@
-import random
-
 # Statement for enabling the development environment
+# Enabling the development environment
 DEBUG = True
+DB_USER = 'root'
+DB_PASS = 'root'
+DB_HOST = 'localhost'
+#DB_PORT = '80'
+DB_NAME = 'IntegraTI'
 
 # Define the application directory
 import os
@@ -9,7 +13,7 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # Define the database - we are working with
 # SQLite for this example
-SQLALCHEMY_DATABASE_URI = 'mysql://root:root@localhost/IntegraTI'
+SQLALCHEMY_DATABASE_URI = 'mysql://'+DB_USER+':'+DB_PASS+'@'+DB_HOST+'/'+DB_NAME
 DATABASE_CONNECT_OPTIONS = {}
 
 # Application threads. A common general assumption is
