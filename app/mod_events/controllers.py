@@ -34,9 +34,25 @@ event_m = ns.model('event', {
     'tags': fields.List(fields.Nested(tag_m)),
     'files': fields.List(fields.Integer)
 })
+event_m_expect = ns.model('event', {
+    'title': fields.String(required=True),
+    'description': fields.String(required=True),
+    'date_start': fields.DateTime(required=True),
+    'date_end': fields.DateTime(required=True),
+    'location': fields.String(required=True),
+    'url': fields.String(required=True),
+    'need_help': fields.Boolean(required=True),
+    'id_event_type': fields.Integer,
+    'tags': fields.List(fields.Nested(tag_m)),
+    'files': fields.List(fields.Integer)
+})
 
 event_type_m = ns.model('event_type', {
     'id_event_type': fields.Integer,
+    'name': fields.String,
+    'description': fields.String
+})
+event_type_m_expect = ns.model('event_type', {
     'name': fields.String,
     'description': fields.String
 })
@@ -60,7 +76,7 @@ class EventController(Resource):
         return ev
 
     @ns.response(200, 'Successfully updated', event_m)
-    @ns.expect(event_m)
+    @ns.expect(event_m_expect)
     def put(self, id):
         '''Update an event by ID'''
         ev = Event.query.filter(Event.disabled == 0).filter(Event.id_event == id).first()
@@ -92,7 +108,7 @@ class EventPostController(Resource):
 
     @ns.response(400, 'The model is malformed')
     @ns.response(200, 'Added', event_m)
-    @ns.expect(event_m)
+    @ns.expect(event_m_expect)
     def post(self):
         '''Create a new event'''
         ev = Event()
@@ -132,7 +148,7 @@ class EventTypeController(Resource):
         return et
 
     @ns.response(200, 'Event altered')
-    @ns.expect(event_type_m)
+    @ns.expect(event_type_m_expect)
     def put(self, id):
         '''Update an event_type by ID'''
         et = EventType.query.filter(EventType.disabled == 0).filter(EventType.id_event_type == id)
@@ -167,7 +183,7 @@ class EventTypePostController(Resource):
 
     @ns.response(400, 'The model is malformed')
     @ns.response(200, 'Event inserted')
-    @ns.expect(event_type_m)
+    @ns.expect(event_type_m_expect)
     def post(self):
         '''Create a new event_type'''
         et = EventType(request.json['name'], request.json['description'])
