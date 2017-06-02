@@ -14,6 +14,7 @@ class User(Base):
     sigaa_registration_number = db.Column(db.String(15), unique=True)
     sigaa_user_name = db.Column(db.String(50), unique=True)
     password = db.Column(db.String(255))
+
     id_photo_file = db.Column(db.Integer, db.ForeignKey('file.id_file'))
     event_participations = db.relationship(
         'Event',
@@ -28,6 +29,7 @@ class User(Base):
 
     def __init__(self, name=None, email=None, sigaa_registration_number=None, sigaa_user_name=None,
                  password=None, id_photo_file=None):
+
         self.name = name
         self.email = email
         self.sigaa_registration_number = sigaa_registration_number

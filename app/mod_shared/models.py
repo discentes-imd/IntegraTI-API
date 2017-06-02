@@ -3,6 +3,7 @@ from sqlalchemy.ext.declarative import declared_attr
 from app.cache import get_current_user
 
 
+
 class Base(db.Model):
     __abstract__ = True
     disabled = db.Column(db.Boolean, default=0)

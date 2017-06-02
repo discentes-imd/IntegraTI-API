@@ -10,7 +10,9 @@ from app.mod_events.models import EventType, Event
 from app.mod_shared.models import Tag
 
 # Import utils
-from app.utils import update_object, abort_if_none, msg
+from app.utils import update_object
+from app.utils import abort_if_none
+from app.utils import msg
 
 # Define the blueprint: 'event', set its url prefix: app.url/event
 mod_event = Blueprint('event', __name__, url_prefix='/event')
@@ -34,6 +36,7 @@ event_m = ns.model('event', {
     'tags': fields.List(fields.Nested(tag_m)),
     'files': fields.List(fields.Integer)
 })
+
 event_m_expect = ns.model('event', {
     'title': fields.String(required=True),
     'description': fields.String(required=True),
@@ -181,12 +184,15 @@ class EventTypePostController(Resource):
         '''Get a event_type list'''
         return EventType.query.filter(EventType.disabled == 0).all()
 
+
     @ns.response(400, 'The model is malformed')
     @ns.response(200, 'Event inserted')
     @ns.expect(event_type_m_expect)
     def post(self):
         '''Create a new event_type'''
         et = EventType(request.json['name'], request.json['description'])
+        et = et.first()
+        abort_if_none(et, 404, 'Not Found')
         db.session.add(et)
         db.session.commit()
         return msg(et.id_event_type, 'id')
