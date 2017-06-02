@@ -18,11 +18,6 @@ def verify_route():
             abort(403, 'Authorization header missing')
 
 
-
-# TODO: Verificar porque a request está continuando depois do abort
-# TODO: Implementar a função verify token
-# TODO: Depois de decodificar o token adicionar o id_user ao objeto request
-# TODO: Implementar blacklist para tokens (logout por ex.)
 # TODO: Implementar a validação dos modelos de entrada
 
 def verify_token():
@@ -30,6 +25,8 @@ def verify_token():
     Verify if the token is valid, not expired and not blacklisted
     """
     if 'Authorization' in request.headers:
+        if request.headers['Authorization'] in cache.blacklisted_tokens:
+            abort(403, 'Error: invalid token')
         try:
             payload = jwt.decode(request.headers['Authorization'], config.SECRET_KEY)
             cache.current_user = payload['id_user']
@@ -44,6 +41,8 @@ def encrypt_password():
     Verify if the route is for login or user create, then encrypts the password.
     """
     if str(request.url_rule) == '/auth/user/' and request.method == 'POST':
+        request.json['password'] = generate_password_hash(request.json['password'])
+    if str(request.url_rule) == '/auth/user/resetpassword/' and request.method == 'PUT':
         request.json['password'] = generate_password_hash(request.json['password'])
 
 

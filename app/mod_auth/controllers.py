@@ -20,19 +20,22 @@ from app.utils import abort_if_none, msg, update_object
 
 import config
 
+from app import cache
+
+import random
+
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
 mod_auth = Blueprint('auth', __name__, url_prefix='/auth')
 ns = Namespace('auth', 'Operations related to authentication and user')
 
+# Models used in formatting input and response
 msg_m = ns.model('msg', {
-    'msg': fields.String
+    'message': fields.String
 })
-
 user_auth_m = ns.model('user_auth', {
     'username': fields.String(required=True),
     'password': fields.String(required=True)
 })
-
 user_m = ns.model('user', {
     'id_user': fields.Integer,
     'name': fields.String,
@@ -41,7 +44,6 @@ user_m = ns.model('user', {
     'sigaa_user_name': fields.String,
     'id_photo_file': fields.Integer
 })
-
 user_m_expect = ns.model('user', {
     'name': fields.String,
     'email': fields.String,
@@ -50,11 +52,12 @@ user_m_expect = ns.model('user', {
     'id_photo_file': fields.Integer,
     'password': fields.String
 })
+password_reset_m = ns.model('password_reset', {
+    'old_password': fields.String,
+    'password': fields.String
+})
 
-
-# TODO: Implementar encriptação do password no db
 # TODO: Implementar permissões de usuário
-
 
 # Define the authentication controller. POST is for login and DELETE for logout.
 @ns.route('/login/')
@@ -63,6 +66,7 @@ user_m_expect = ns.model('user', {
 @ns.header('Authorization', 'The authorization token')
 class AuthController(Resource):
     @ns.expect(user_auth_m)
+    @ns.response(200, 'Login success')
     def post(self):
         'Login the user'
         username = request.json['username']
@@ -73,16 +77,39 @@ class AuthController(Resource):
         if not check_password_hash(us.password, password):
             return msg('Username or password incorrect'), 403
         token = jwt.encode(
-            {'id_user': us.id_user},
+            {'id_user': us.id_user,
+             'tid': random.random()},
             config.SECRET_KEY,
             algorithm='HS256'
         )
         return msg(token.decode('utf-8'), 'token')
 
     @ns.marshal_with(msg_m)
+    @ns.response(200, 'Logout success')
     def delete(self):
         'Logout the user'
         pass
+
+
+@ns.route('/user/resetpassword/')
+@ns.response(403, 'User is not logged, not have permission or the password is incorrect')
+@ns.response(400, 'The input is wrong')
+@ns.response(404, 'User not Found')
+@ns.response(200, 'The password is successfully altered. Obs: You need login again, to receive new token.')
+@ns.header('Authorization', 'The authorization token')
+class PasswordController(Resource):
+    @ns.expect(password_reset_m)
+    def put(self):
+        password = request.json['password']
+        us = User.query.filter(User.disabled == 0).filter(User.id_user == cache.current_user)
+        us = us.first()
+        abort_if_none(us, 404, 'User not found')
+        if not check_password_hash(us.password, request.json['old_password']):
+            return msg('Old password incorrect'), 403
+        us.password = password
+        db.session.commit()
+        cache.blacklisted_tokens.append(request.headers['Authorization'])
+        return msg('success!')
 
 
 @ns.route('/user/<int:id>')

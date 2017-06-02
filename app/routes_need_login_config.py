@@ -6,5 +6,6 @@ routes = [
     ('/event/<int:id>', ('GET', 'PUT', 'DELETE')),
     ('/event/type/', ('POST', 'GET')),
     ('/event/type/<int:id>', ('GET', 'PUT', 'DELETE')),
+    ('/auth/user/resetpassword/', ('PUT'))
 ]
 
