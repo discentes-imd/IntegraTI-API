@@ -29,9 +29,6 @@ mod_auth = Blueprint('auth', __name__, url_prefix='/auth')
 ns = Namespace('auth', 'Operations related to authentication and user')
 
 # Models used in formatting input and response
-msg_m = ns.model('msg', {
-    'message': fields.String
-})
 user_auth_m = ns.model('user_auth', {
     'username': fields.String(required=True),
     'password': fields.String(required=True)
@@ -84,11 +81,11 @@ class AuthController(Resource):
         )
         return msg(token.decode('utf-8'), 'token')
 
-    @ns.marshal_with(msg_m)
     @ns.response(200, 'Logout success')
     def delete(self):
         'Logout the user'
-        pass
+        cache.blacklisted_tokens.append(request.headers['Authorization'])
+        return msg('Logged out')
 
 
 @ns.route('/user/resetpassword/')
@@ -100,6 +97,7 @@ class AuthController(Resource):
 class PasswordController(Resource):
     @ns.expect(password_reset_m)
     def put(self):
+        'Change the password'
         password = request.json['password']
         us = User.query.filter(User.disabled == 0).filter(User.id_user == cache.current_user)
         us = us.first()
@@ -126,7 +124,7 @@ class UserController(Resource):
         abort_if_none(us, 404, 'not found')
         return us
 
-    @ns.response(200, 'User updated', msg_m)
+    @ns.response(200, 'User updated')
     @ns.expect(user_m_expect)
     def put(self, id):
         'Update an user by ID'
@@ -136,7 +134,7 @@ class UserController(Resource):
         db.session.commit()
         return msg('success!')
 
-    @ns.response(200, 'User disabled on db', msg_m)
+    @ns.response(200, 'User disabled on db')
     def delete(self, id):
         'Delete an user by ID'
         us = User.query.filter(User.disabled == 0).filter(User.id_user == id).first()
@@ -158,7 +156,7 @@ class UserPostController(Resource):
         return User.query.filter(User.disabled == 0).all()
 
     @ns.response(400, 'The model is malformed')
-    @ns.response(200, 'User inserted', msg_m)
+    @ns.response(200, 'User inserted')
     @ns.expect(user_m_expect)
     def post(self):
         'Create a new user'
