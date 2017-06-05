@@ -1,7 +1,9 @@
 from app import db
 from sqlalchemy.ext.declarative import declared_attr
-from app.cache import get_current_user
+from flask import g
 
+def get_current_user():
+    return g.current_user
 
 
 class Base(db.Model):
@@ -27,7 +29,7 @@ class File(Base):
     description = db.Column(db.String(255))
     path = db.Column(db.String(255), unique=True)
 
-    def __init__(self, name, description, path):
+    def __init__(self, name=None, description=None, path=None):
         self.name = name
         self.description = description
         self.path = path

@@ -1,5 +1,5 @@
 # Import flask dependencies
-from flask import Blueprint, request
+from flask import Blueprint, request, g
 
 # Import password / encryption helper tools
 import jwt
@@ -99,7 +99,7 @@ class PasswordController(Resource):
     def put(self):
         'Change the password'
         password = request.json['password']
-        us = User.query.filter(User.disabled == 0).filter(User.id_user == cache.current_user)
+        us = User.query.filter(User.disabled == 0).filter(User.id_user == g.current_user)
         us = us.first()
         abort_if_none(us, 404, 'User not found')
         if not check_password_hash(us.password, request.json['old_password']):

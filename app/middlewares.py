@@ -1,4 +1,4 @@
-from flask import Response, request, abort
+from flask import Response, request, abort, g
 from flask_restplus import abort
 from app.utils import msg
 from app.routes_need_login_config import routes
@@ -29,7 +29,7 @@ def verify_token():
             abort(403, 'Error: invalid token')
         try:
             payload = jwt.decode(request.headers['Authorization'], config.SECRET_KEY)
-            cache.current_user = payload['id_user']
+            g.current_user = payload['id_user']
         except jwt.ExpiredSignatureError:
             abort(403, 'Error: token expired')
         except jwt.DecodeError:
@@ -45,14 +45,15 @@ def encrypt_password():
     if str(request.url_rule) == '/auth/user/resetpassword/' and request.method == 'PUT':
         request.json['password'] = generate_password_hash(request.json['password'])
 
-
-def reset_current_user(response):
-    cache.current_user = None
-    return response
-
 def set_cors_header(response):
+    """
+    Set the headers needed to cross origin access.
+    
+    :param response: flask.Response
+    :return: flask.Response
+    """
     response.headers['Access-Control-Allow-Headers'] = 'Content-Type, api_key, Authorization, x-requested-with, Total-Count, Total-Pages, Error-Message'
     response.headers['Access-Control-Allow-Origin'] = '*'
     response.headers['Access-Control-Allow-Methods'] = 'POST, GET, OPTIONS, PUT, DELETE'
-    response.headers['Access-Control-Max-Age:1800'] = '180'
+    response.headers['Access-Control-Max-Age'] = '1800'
     return response

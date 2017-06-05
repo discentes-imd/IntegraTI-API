@@ -1,3 +1,9 @@
+"""
+The file is used to configure the routes that user need to be logged.
+Format:
+(route rule, (list of methods that need login))
+"""
+
 routes = [
     ('/auth/user/<int:id>', ('GET', 'PUT', 'DELETE')),
     ('/auth/user/', ('GET')),
@@ -8,4 +14,3 @@ routes = [
     ('/event/type/<int:id>', ('GET', 'PUT', 'DELETE')),
     ('/auth/user/resetpassword/', ('PUT'))
 ]
-
