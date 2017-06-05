@@ -1,7 +1,7 @@
 from flask_restplus import abort
 
 
-def update_object(obj, dictio):
+def fill_object(obj, dictio):
     """ Update a object based on a dictionary
     :param obj: object
     :param dictio: dict

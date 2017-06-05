@@ -16,7 +16,7 @@ from app.mod_auth.models import User
 from werkzeug.security import check_password_hash
 
 # Import utils
-from app.utils import abort_if_none, msg, update_object
+from app.utils import abort_if_none, msg, fill_object
 
 import config
 
@@ -68,18 +68,23 @@ class AuthController(Resource):
         'Login the user'
         username = request.json['username']
         password = request.json['password']
-        us = User.query.filter(User.disabled == 0).filter(User.sigaa_user_name == username)
-        us = us.first()
+
+        us = User.query\
+            .filter(User.disabled == 0)\
+            .filter(User.sigaa_user_name == username)\
+            .first()
         abort_if_none(us, 403, 'Username or password incorrect')
+
         if not check_password_hash(us.password, password):
             return msg('Username or password incorrect'), 403
+
         token = jwt.encode(
-            {'id_user': us.id_user,
-             'tid': random.random()},
+            {'id_user': us.id_user, 'tid': random.random() },
             config.SECRET_KEY,
             algorithm='HS256'
-        )
-        return msg(token.decode('utf-8'), 'token')
+        ).decode('utf-8')
+
+        return msg(token, 'token')
 
     @ns.response(200, 'Logout success')
     def delete(self):
@@ -95,18 +100,23 @@ class AuthController(Resource):
 @ns.response(200, 'The password is successfully altered. Obs: You need login again, to receive new token.')
 @ns.header('Authorization', 'The authorization token')
 class PasswordController(Resource):
+
     @ns.expect(password_reset_m)
     def put(self):
         'Change the password'
-        password = request.json['password']
-        us = User.query.filter(User.disabled == 0).filter(User.id_user == g.current_user)
-        us = us.first()
+        us = User.query \
+            .filter(User.disabled == 0) \
+            .filter(User.id_user == g.current_user) \
+            .first()
         abort_if_none(us, 404, 'User not found')
+
         if not check_password_hash(us.password, request.json['old_password']):
             return msg('Old password incorrect'), 403
-        us.password = password
+
+        us.password = request.json['password']
         db.session.commit()
         cache.blacklisted_tokens.append(request.headers['Authorization'])
+
         return msg('success!')
 
 
@@ -120,7 +130,10 @@ class UserController(Resource):
     @ns.response(200, 'Returns the user model on the body of the response')
     def get(self, id):
         'Get an user by ID'
-        us = User.query.filter(User.disabled == 0).filter(User.id_user == id).first()
+        us = User.query \
+            .filter(User.disabled == 0) \
+            .filter(User.id_user == id) \
+            .first()
         abort_if_none(us, 404, 'not found')
         return us
 
@@ -128,19 +141,28 @@ class UserController(Resource):
     @ns.expect(user_m_expect)
     def put(self, id):
         'Update an user by ID'
-        us = User.query.filter(User.disabled == 0).filter(User.id_user == id).first()
+        us = User.query\
+            .filter(User.disabled == 0)\
+            .filter(User.id_user == id)\
+            .first()
         abort_if_none(us, 404, 'not found')
-        update_object(us, request.json)
+
+        fill_object(us, request.json)
         db.session.commit()
+
         return msg('success!')
 
     @ns.response(200, 'User disabled on db')
     def delete(self, id):
         'Delete an user by ID'
-        us = User.query.filter(User.disabled == 0).filter(User.id_user == id).first()
+        us = User.query.filter(User.disabled == 0)\
+            .filter(User.id_user == id)\
+            .first()
         abort_if_none(us, 404, 'not found')
+
         us.disabled = 1
         db.session.commit()
+
         return msg('disabled on db')
 
 
@@ -161,7 +183,7 @@ class UserPostController(Resource):
     def post(self):
         'Create a new user'
         us = User()
-        update_object(us, request.json)
+        fill_object(us, request.json)
         db.session.add(us)
         db.session.commit()
         return msg(us.id_user, 'id')

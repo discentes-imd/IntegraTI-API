@@ -38,11 +38,12 @@ def verify_token():
 
 def encrypt_password():
     """
-    Verify if the route is for login or user create, then encrypts the password.
+    Verify if the route is for password reset or user create, then encrypts the password.
     """
-    if str(request.url_rule) == '/auth/user/' and request.method == 'POST':
-        request.json['password'] = generate_password_hash(request.json['password'])
-    if str(request.url_rule) == '/auth/user/resetpassword/' and request.method == 'PUT':
+    if not 'password' in request.json:
+        return
+    if str(request.url_rule) == '/auth/user/' and request.method == 'POST' \
+    or str(request.url_rule) == '/auth/user/resetpassword/' and request.method == 'PUT':
         request.json['password'] = generate_password_hash(request.json['password'])
 
 def set_cors_header(response):
