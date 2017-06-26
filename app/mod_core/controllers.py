@@ -67,7 +67,7 @@ class UserPostController(Resource):
     @ns.response(200, 'Return an list of users that matched criteria', user_m)
     @ns.marshal_with(user_m)
     def get(self):
-        """Get an list of users"""
+        """Get a list of users"""
         return User.query.filter(User.disabled == 0).all()
 
     @ns.response(400, 'The model is malformed')
