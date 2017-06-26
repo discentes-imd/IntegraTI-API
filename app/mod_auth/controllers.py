@@ -1,28 +1,20 @@
 # Import flask dependencies
-from flask import Blueprint, request, g
+import random
 
 # Import password / encryption helper tools
 import jwt
-
-# Import the database object from the main app module
-from app import db
-
-from flask_restplus import Namespace, Resource, fields, reqparse
-
-# Import module models (i.e. User)
-from app.mod_auth.models import User
-
+from flask import Blueprint, request
+from flask_restplus import Namespace, Resource, fields
 # Import password utils
 from werkzeug.security import check_password_hash
 
-# Import utils
-from app.utils import abort_if_none, msg, fill_object
-
 import config
-
 from app import cache
-
-import random
+# Import the database object from the main app module
+# Import module models (i.e. User)
+from app.mod_core.models import User
+# Import utils
+from app.utils import abort_if_none, msg
 
 # Define the blueprint: 'auth', set its url prefix: app.url/auth
 mod_auth = Blueprint('auth', __name__, url_prefix='/auth')
@@ -56,6 +48,7 @@ password_reset_m = ns.model('password_reset', {
 
 # TODO: Implementar permissões de usuário
 
+
 # Define the authentication controller. POST is for login and DELETE for logout.
 @ns.route('/login/')
 @ns.response(403, 'Login or logout failed')
@@ -65,12 +58,12 @@ class AuthController(Resource):
     @ns.expect(user_auth_m)
     @ns.response(200, 'Login success')
     def post(self):
-        'Login the user'
+        """Login the user"""
         username = request.json['username']
         password = request.json['password']
 
         us = User.query\
-            .filter(User.disabled == False)\
+            .filter(User.disabled is False)\
             .filter(User.sigaa_user_name == username)\
             .first()
         abort_if_none(us, 403, 'Username or password incorrect')
@@ -79,7 +72,7 @@ class AuthController(Resource):
             return msg('Username or password incorrect'), 403
 
         token = jwt.encode(
-            {'id_user': us.id_user, 'tid': random.random() },
+            {'id_user': us.id_user, 'tid': random.random()},
             config.SECRET_KEY,
             algorithm='HS256'
         ).decode('utf-8')
@@ -88,102 +81,6 @@ class AuthController(Resource):
 
     @ns.response(200, 'Logout success')
     def delete(self):
-        'Logout the user'
+        """Logout the user"""
         cache.blacklisted_tokens.append(request.headers['Authorization'])
         return msg('Logged out')
-
-
-@ns.route('/user/resetpassword/')
-@ns.response(403, 'User is not logged, not have permission or the password is incorrect')
-@ns.response(400, 'The input is wrong')
-@ns.response(404, 'User not Found')
-@ns.response(200, 'The password is successfully altered. Obs: You need login again, to receive new token.')
-@ns.header('Authorization', 'The authorization token')
-class PasswordController(Resource):
-
-    @ns.expect(password_reset_m)
-    def put(self):
-        'Change the password'
-        us = User.query \
-            .filter(User.disabled == 0) \
-            .filter(User.id_user == g.current_user) \
-            .first()
-        abort_if_none(us, 404, 'User not found')
-
-        if not check_password_hash(us.password, request.json['old_password']):
-            return msg('Old password incorrect'), 403
-
-        us.password = request.json['password']
-        db.session.commit()
-        cache.blacklisted_tokens.append(request.headers['Authorization'])
-
-        return msg('success!')
-
-
-@ns.route('/user/<int:id>')
-@ns.response(403, 'User is not logged or not have permission')
-@ns.response(400, 'ID is not int')
-@ns.response(404, 'Not Found')
-@ns.header('Authorization', 'The authorization token')
-class UserController(Resource):
-    @ns.marshal_with(user_m)
-    @ns.response(200, 'Returns the user model on the body of the response')
-    def get(self, id):
-        'Get an user by ID'
-        us = User.query \
-            .filter(User.disabled == 0) \
-            .filter(User.id_user == id) \
-            .first()
-        abort_if_none(us, 404, 'not found')
-        return us
-
-    @ns.response(200, 'User updated')
-    @ns.expect(user_m_expect)
-    def put(self, id):
-        'Update an user by ID'
-        us = User.query\
-            .filter(User.disabled == 0)\
-            .filter(User.id_user == id)\
-            .first()
-        abort_if_none(us, 404, 'not found')
-
-        fill_object(us, request.json)
-        db.session.commit()
-
-        return msg('success!')
-
-    @ns.response(200, 'User disabled on db')
-    def delete(self, id):
-        'Delete an user by ID'
-        us = User.query.filter(User.disabled == 0)\
-            .filter(User.id_user == id)\
-            .first()
-        abort_if_none(us, 404, 'not found')
-
-        us.disabled = 1
-        db.session.commit()
-
-        return msg('disabled on db')
-
-
-@ns.route('/user/')
-@ns.response(403, 'User is not logged or not have permission')
-@ns.header('Authorization', 'The authorization token')
-class UserPostController(Resource):
-    @ns.response(400, 'One of the arguments is malformed')
-    @ns.response(200, 'Return an list of users that matched criteria', user_m)
-    @ns.marshal_with(user_m)
-    def get(self):
-        'Get an list of users'
-        return User.query.filter(User.disabled == 0).all()
-
-    @ns.response(400, 'The model is malformed')
-    @ns.response(200, 'User inserted')
-    @ns.expect(user_m_expect)
-    def post(self):
-        'Create a new user'
-        us = User()
-        fill_object(us, request.json)
-        db.session.add(us)
-        db.session.commit()
-        return msg(us.id_user, 'id')

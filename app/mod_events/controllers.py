@@ -7,7 +7,7 @@ from app import db
 
 # Import module models (i.e. User)
 from app.mod_events.models import EventType, Event
-from app.mod_shared.models import Tag
+from app.mod_core.models import Tag
 
 # Import utils
 from app.utils import fill_object

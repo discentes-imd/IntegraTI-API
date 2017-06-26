@@ -8,7 +8,7 @@ TODO: maybe these constructors are bad designed (do they need
 # pylint: disable = C0111, R0903, C0103
 
 from app import db
-from app.mod_shared.models import Base
+from app.mod_core.models import Base
 
 
 # Many-to-many helper tables (for public access, use models only) -----------
@@ -68,7 +68,6 @@ event_participation = db.Table(
         db.ForeignKey('event.id_event')
     )
 )
-
 
 # Models and their simple relantionships -------------------------------------
 class Event(Base):
