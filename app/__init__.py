@@ -7,10 +7,20 @@ from flask_restplus import Api
 import logging
 from logging.handlers import RotatingFileHandler
 import pymysql
+from app.middlewares import verify_route, verify_token, encrypt_password, set_cors_header
+
 pymysql.install_as_MySQLdb()
 
 # Define the WSGI application object
 app = Flask(__name__)
+
+# Register middlewares
+# before request
+app.before_request(verify_route)
+app.before_request(verify_token)
+app.before_request(encrypt_password)
+# after request
+app.after_request(set_cors_header)
 
 # Define Api application object
 api = Api(app, version='0.5a', title='IntegraTI-API',
@@ -42,18 +52,23 @@ def not_found(error):
     app.logger.error(error)
     return error
 
-from app.mod_shared import models
+from app.mod_core import models
 from app.mod_auth import models
 from app.mod_events import models
 
 
 # Import a module / component using its blueprint handler variable (mod_auth)
-from app.mod_auth.controllers import mod_auth as auth_module
+from app.mod_core.controllers import mod_core as core_module, ns as ns_core
+from app.mod_auth.controllers import mod_auth as auth_module, ns as ns_auth
 from app.mod_events.controllers import mod_event as event_module, ns as ns_event
 
 # Register blueprint(s)
+
+app.register_blueprint(core_module)
 app.register_blueprint(auth_module)
 app.register_blueprint(event_module)
+api.add_namespace(ns_core)
+api.add_namespace(ns_auth)
 api.add_namespace(ns_event)
 # app.register_blueprint(xyz_module)
 # ..

@@ -1,3 +1,4 @@
+# Statement for enabling the development environment
 # Enabling the development environment
 DEBUG = True
 DB_USER = 'root'
@@ -29,7 +30,7 @@ CSRF_ENABLED     = True
 CSRF_SESSION_KEY = "secret"
 
 # Secret key for signing cookies
-SECRET_KEY = "secret"
+SECRET_KEY = "thesecretsss"
 
 LOGGING_FORMAT = '[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
 LOGGING_LOCATION = 'logs/error.log'
