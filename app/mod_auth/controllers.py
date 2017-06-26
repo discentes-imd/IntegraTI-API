@@ -70,7 +70,7 @@ class AuthController(Resource):
         password = request.json['password']
 
         us = User.query\
-            .filter(User.disabled == 0)\
+            .filter(User.disabled == False)\
             .filter(User.sigaa_user_name == username)\
             .first()
         abort_if_none(us, 403, 'Username or password incorrect')
