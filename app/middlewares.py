@@ -40,7 +40,7 @@ def encrypt_password():
     """
     Verify if the route is for password reset or user create, then encrypts the password.
     """
-    if not 'password' in request.json:
+    if request.json is None or not 'password' in request.json:
         return
     if str(request.url_rule) == '/auth/user/' and request.method == 'POST' \
     or str(request.url_rule) == '/auth/user/resetpassword/' and request.method == 'PUT':
