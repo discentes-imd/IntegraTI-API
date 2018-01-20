@@ -5,8 +5,6 @@ import random
 import jwt
 from flask import Blueprint, request
 from flask_restplus import Namespace, Resource, fields
-# Import password utils
-from werkzeug.security import check_password_hash
 
 import config
 from app import cache
@@ -62,13 +60,11 @@ class AuthController(Resource):
         username = request.json['username']
         password = request.json['password']
 
-        us = User.query\
-            .filter(User.disabled is False)\
-            .filter(User.sigaa_user_name == username)\
-            .first()
+        us = User.query.filter(User.disabled == False).filter(User.email == username).first()
+
         abort_if_none(us, 403, 'Username or password incorrect')
 
-        if not check_password_hash(us.password, password):
+        if not us.password == password:
             return msg('Username or password incorrect'), 403
 
         token = jwt.encode(
