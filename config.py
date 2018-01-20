@@ -1,8 +1,8 @@
 # Statement for enabling the development environment
 # Enabling the development environment
 DEBUG = True
-DB_USER = 'root'
-DB_PASS = 'root'
+DB_USER = 'rodrigondec'
+DB_PASS = ''
 DB_HOST = 'localhost'
 #DB_PORT = '80'
 DB_NAME = 'IntegraTI'
@@ -13,7 +13,8 @@ BASE_DIR = os.path.abspath(os.path.dirname(__file__))
 
 # Define the database - we are working with
 # SQLite for this example
-SQLALCHEMY_DATABASE_URI = 'mysql://'+DB_USER+':'+DB_PASS+'@'+DB_HOST+'/'+DB_NAME
+# SQLALCHEMY_DATABASE_URI = 'mysql://'+DB_USER+':'+DB_PASS+'@'+DB_HOST+'/'+DB_NAME
+SQLALCHEMY_DATABASE_URI = 'postgresql+psycopg2://{user}:{pw}@{url}/{db}'.format(user=DB_USER,pw=DB_PASS,url=DB_HOST,db=DB_NAME)
 DATABASE_CONNECT_OPTIONS = {}
 
 # Application threads. A common general assumption is
