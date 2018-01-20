@@ -87,3 +87,5 @@ ENV/
 
 # Rope project settings
 .ropeproject
+
+l_env/
