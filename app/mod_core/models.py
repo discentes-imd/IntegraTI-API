@@ -1,9 +1,11 @@
 from app import db
 from sqlalchemy.ext.declarative import declared_attr
+from sqlalchemy_utils.types.password import PasswordType
 from flask import g
 
 
 def get_current_user():
+    # return None
     return g.current_user
 
 
@@ -33,7 +35,14 @@ class User(Base):
     email = db.Column(db.String(50), unique=True)
     sigaa_registration_number = db.Column(db.String(15), unique=True)
     sigaa_user_name = db.Column(db.String(50), unique=True)
-    password = db.Column(db.String(255))
+    password = db.Column(PasswordType(
+        schemes=[
+            'pbkdf2_sha512',
+            'md5_crypt'
+        ],
+
+        deprecated=['md5_crypt']
+    ))
 
     id_photo_file = db.Column(db.Integer, db.ForeignKey('file.id_file'))
     event_participations = db.relationship(
