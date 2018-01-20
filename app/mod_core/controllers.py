@@ -1,6 +1,5 @@
 from flask import request, g, Blueprint
 from flask_restplus import Resource, Namespace
-from werkzeug.security import check_password_hash
 
 from app import db, cache
 from app.mod_auth.controllers import user_m, user_m_expect, password_reset_m
@@ -24,7 +23,7 @@ class UserController(Resource):
     def get(self, id):
         """Get an user by ID"""
         us = User.query \
-            .filter(User.disabled == 0) \
+            .filter(User.disabled == False) \
             .filter(User.id_user == id) \
             .first()
         abort_if_none(us, 404, 'not found')
@@ -34,13 +33,17 @@ class UserController(Resource):
     @ns.expect(user_m_expect)
     def put(self, id):
         """Update an user by ID"""
-        us = User.query\
-            .filter(User.disabled == 0)\
-            .filter(User.id_user == id)\
-            .first()
+        us = User.query.filter(User.disabled == False).filter(User.id_user == id).first()
         abort_if_none(us, 404, 'not found')
 
         fill_object(us, request.json)
+        #
+        #
+        #
+        us.id_photo_file = None  # REMOVER DEPOISIDIASIEAHSUEHSAEHASHUEASHUEHAHUE
+        #
+        #
+        #
         db.session.commit()
 
         return msg('success!')
@@ -48,12 +51,12 @@ class UserController(Resource):
     @ns.response(200, 'User disabled on db')
     def delete(self, id):
         """Delete an user by ID"""
-        us = User.query.filter(User.disabled == 0)\
+        us = User.query.filter(User.disabled == False)\
             .filter(User.id_user == id)\
             .first()
         abort_if_none(us, 404, 'not found')
 
-        us.disabled = 1
+        us.disabled = True
         db.session.commit()
 
         return msg('disabled on db')
@@ -68,7 +71,7 @@ class UserPostController(Resource):
     @ns.marshal_with(user_m)
     def get(self):
         """Get a list of users"""
-        return User.query.filter(User.disabled == 0).all()
+        return User.query.filter(User.disabled == False).all()
 
     @ns.response(400, 'The model is malformed')
     @ns.response(200, 'User inserted')
@@ -76,7 +79,15 @@ class UserPostController(Resource):
     def post(self):
         """Create a new user"""
         us = User()
+        us.disabled = False
         fill_object(us, request.json)
+        #
+        #
+        #
+        us.id_photo_file = None # REMOVER DEPOISIDIASIEAHSUEHSAEHASHUEASHUEHAHUE
+        #
+        #
+        #
         db.session.add(us)
         db.session.commit()
         return msg(us.id_user, 'id')
@@ -94,13 +105,13 @@ class PasswordController(Resource):
     def put(self):
         """Change the password"""
         us = User.query \
-            .filter(User.disabled == 0) \
+            .filter(User.disabled == False) \
             .filter(User.id_user == g.current_user) \
             .first()
         abort_if_none(us, 404, 'User not found')
 
-        if not check_password_hash(us.password, request.json['old_password']):
-            return msg('Old password incorrect'), 403
+        # if not check_password_hash(us.password, request.json['old_password']):
+        #     return msg('Old password incorrect'), 403
 
         us.password = request.json['password']
         db.session.commit()
