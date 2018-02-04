@@ -34,4 +34,4 @@ CSRF_SESSION_KEY = "secret"
 SECRET_KEY = "thesecretsss"
 
 LOGGING_FORMAT = '[%(asctime)s] {%(pathname)s:%(lineno)d} %(levelname)s - %(message)s'
-# LOGGING_LOCATION = 'logs/error.log'
+LOGGING_LOCATION = 'logs/error.log'
